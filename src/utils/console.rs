@@ -1,7 +1,6 @@
 use std::io;
 use thiserror::Error;
 
-
 pub struct Console {}
 
 #[derive(Error, Debug)]
@@ -10,7 +9,6 @@ pub enum ConsoleError {
     IoError(#[from] std::io::Error),
 }
 
-
 impl Console {
     pub fn input_line() -> Result<String, ConsoleError> {
         let mut buffer = String::new();
@@ -18,5 +16,9 @@ impl Console {
         stdin.read_line(&mut buffer)?;
         buffer.pop();
         Ok(buffer)
+    }
+
+    pub fn clear() {
+        print!("\x1B[2J\x1B[1;1H");
     }
 }
