@@ -49,7 +49,8 @@ impl Menu {
     fn get_track_list(&self) -> String {
         format!(
             "Track list \n\
-        {}",
+            0. Back \n\
+            {}",
             self.track_list.join(",")
         )
     }
@@ -60,6 +61,7 @@ impl Menu {
         loop {
             let str = Console::input_line()?;
             let num: i32 = str.parse().unwrap();
+            println!("{}", num);
             let content = match self.state {
                 State::Main => match num {
                     1 => {
@@ -67,9 +69,17 @@ impl Menu {
                         self.get_track_list()
                     }
                     2 => return Ok(()),
-                    _ => "".to_string(),
+                    _ => return Ok(()),
                 },
-                State::TrackList => "ewe".to_string(),
+                State::TrackList => {
+                    let mut content = "".to_string();
+                    println!("{}", num);
+                    if num == 0 {
+                        self.state = State::Main;
+                        content = self.get_main();
+                    }
+                    content
+                }
             };
             Console::clear();
             println!("{}", content);
