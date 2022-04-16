@@ -32,3 +32,4 @@ impl App {
 
 mod login;
 mod menu;
+mod player;

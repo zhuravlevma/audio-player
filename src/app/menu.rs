@@ -1,10 +1,22 @@
 use crate::utils::console::{Console, ConsoleError};
-use std::fs;
+use std::{fs, thread};
+use std::io::{BufReader};
+use std::sync::{Arc, Mutex};
+
+use std::thread::{JoinHandle, sleep};
+use std::time::Duration;
+
 use thiserror::Error;
+use crate::app::player::{play, Player};
+
+pub enum Track {
+    List,
+    Play(usize),
+}
 
 pub enum State {
     Main,
-    TrackList,
+    TrackList(Track),
 }
 
 #[derive(Error, Debug)]
@@ -16,6 +28,7 @@ pub enum MenuError {
 pub struct Menu {
     state: State,
     track_list: Vec<String>,
+    player: Player,
 }
 
 impl Menu {
@@ -35,6 +48,7 @@ impl Menu {
         Self {
             state: State::Main,
             track_list: res,
+            player: Player::new(),
         }
     }
 
@@ -51,34 +65,58 @@ impl Menu {
             "Track list \n\
             0. Back \n\
             {}",
-            self.track_list.join(",")
+            self.track_list.join("\n")
         )
     }
 
+    // fn get_track(&self) -> String {
+    //
+    // }
+
     pub fn start(&mut self) -> Result<(), MenuError> {
+        let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
+        let mut sink = Arc::new(rodio::Sink::try_new(&handle).unwrap());
         Console::clear();
         println!("{}", self.get_main());
         loop {
             let str = Console::input_line()?;
-            let num: i32 = str.parse().unwrap();
+            let num: usize = str.parse().unwrap();
             println!("{}", num);
-            let content = match self.state {
+            let content = match &self.state {
                 State::Main => match num {
                     1 => {
-                        self.state = State::TrackList;
+                        self.state = State::TrackList(Track::List);
                         self.get_track_list()
                     }
                     2 => return Ok(()),
                     _ => return Ok(()),
                 },
-                State::TrackList => {
-                    let mut content = "".to_string();
-                    println!("{}", num);
-                    if num == 0 {
-                        self.state = State::Main;
-                        content = self.get_main();
+                State::TrackList(track) => {
+                    match track {
+                        Track::List => {
+                            let mut content = "".to_string();
+                            if num == 0 {
+                                self.state = State::Main;
+                                content = self.get_main();
+                            } else {
+                                sink.stop();
+                                sink = Arc::new(rodio::Sink::try_new(&handle).unwrap());
+                                let str: Vec<&str> = self.track_list[num-1].split("  ").collect();
+                                let path = str[1].to_string();
+                                content = path.clone();
+                                let file = std::fs::File::open(path).unwrap();
+                                sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
+                                self.player.append(sink.clone());
+                                self.state = State::TrackList(Track::Play(num-1));
+                            }
+                            content
+                        },
+                        Track::Play(num) => {
+                            let str: Vec<&str> = self.track_list[*num].split("  ").collect();
+                            let path = str[1].to_string();
+                            path
+                        }
                     }
-                    content
                 }
             };
             Console::clear();
