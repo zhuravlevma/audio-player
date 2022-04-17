@@ -1,17 +1,14 @@
-use crate::utils::console::{Console, ConsoleError};
-use std::{fs, thread};
-use std::io::{BufReader};
-use std::sync::{Arc, Mutex};
-
-use std::thread::{JoinHandle, sleep};
-use std::time::Duration;
-
+use crate::app::player::Player;
+use crate::utils::console::ConsoleError;
+use std::fs;
+use std::io::BufReader;
+use std::sync::Arc;
+use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenu, TerminalMenuItem};
 use thiserror::Error;
-use crate::app::player::{play, Player};
 
 pub enum Track {
     List,
-    Play(usize),
+    Play(String),
 }
 
 pub enum State {
@@ -36,14 +33,7 @@ impl Menu {
         let paths = fs::read_dir("./assets").unwrap();
         let res: Vec<String> = paths
             .into_iter()
-            .enumerate()
-            .map(|(index, path)| {
-                format!(
-                    "{}  {}",
-                    index + 1,
-                    path.unwrap().path().display().to_string()
-                )
-            })
+            .map(|path| path.unwrap().path().display().to_string())
             .collect();
         Self {
             state: State::Main,
@@ -52,75 +42,84 @@ impl Menu {
         }
     }
 
-    fn get_main(&self) -> String {
-        "Menu \n\
-         1. Track list\n\
-         2. Exit\n\
-         "
-        .to_string()
+    fn get_main(&self) -> TerminalMenu {
+        menu(vec![label("Menu"), button("Track list"), button("Exit")])
     }
 
-    fn get_track_list(&self) -> String {
-        format!(
-            "Track list \n\
-            0. Back \n\
-            {}",
-            self.track_list.join("\n")
-        )
+    fn get_error(&self) -> TerminalMenu {
+        menu(vec![label("Error"), button("Repeat")])
     }
 
-    // fn get_track(&self) -> String {
-    //
-    // }
+    fn get_track_list(&self) -> TerminalMenu {
+        let mut items: Vec<TerminalMenuItem> = self.track_list.iter().map(button).collect();
+        items.push(button("Back"));
+        menu(items)
+    }
+
+    fn get_track(&self, path: String) -> TerminalMenu {
+        menu(vec![
+            label(format!("Track {}", path)),
+            button("Pause"),
+            button("Back"),
+        ])
+    }
 
     pub fn start(&mut self) -> Result<(), MenuError> {
         let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
         let mut sink = Arc::new(rodio::Sink::try_new(&handle).unwrap());
-        Console::clear();
-        println!("{}", self.get_main());
+        let start_menu = self.get_main();
+        run(&start_menu);
+        let mut current = mut_menu(&start_menu).selected_item_name().to_string();
+
         loop {
-            let str = Console::input_line()?;
-            let num: usize = str.parse().unwrap();
-            println!("{}", num);
             let content = match &self.state {
-                State::Main => match num {
-                    1 => {
+                State::Main => match current.as_str() {
+                    "Repeat" => {
                         self.state = State::TrackList(Track::List);
                         self.get_track_list()
                     }
-                    2 => return Ok(()),
-                    _ => return Ok(()),
+                    "Track list" => {
+                        self.state = State::TrackList(Track::List);
+                        self.get_track_list()
+                    }
+                    "Exit" => return Ok(()),
+                    _ => self.get_error(),
                 },
-                State::TrackList(track) => {
-                    match track {
-                        Track::List => {
-                            let mut content = "".to_string();
-                            if num == 0 {
-                                self.state = State::Main;
-                                content = self.get_main();
-                            } else {
-                                sink.stop();
-                                sink = Arc::new(rodio::Sink::try_new(&handle).unwrap());
-                                let str: Vec<&str> = self.track_list[num-1].split("  ").collect();
-                                let path = str[1].to_string();
-                                content = path.clone();
-                                let file = std::fs::File::open(path).unwrap();
-                                sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
-                                self.player.append(sink.clone());
-                                self.state = State::TrackList(Track::Play(num-1));
+                State::TrackList(track) => match track {
+                    Track::List => {
+                        if current.as_str() == "Back" {
+                            self.state = State::Main;
+                            self.get_main()
+                        } else if current.as_str() == "Repeat" {
+                            self.state = State::TrackList(Track::List);
+                            self.get_track_list()
+                        } else {
+                            let track = self.track_list.iter().find(|&el| el == current.as_str());
+                            match track {
+                                None => self.get_error(),
+                                Some(path) => {
+                                    sink.stop();
+                                    sink = Arc::new(rodio::Sink::try_new(&handle).unwrap());
+                                    let file = std::fs::File::open(path).unwrap();
+                                    sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
+                                    self.player.append(sink.clone());
+                                    self.state = State::TrackList(Track::Play(path.clone()));
+                                    self.get_track(path.clone())
+                                }
                             }
-                            content
-                        },
-                        Track::Play(num) => {
-                            let str: Vec<&str> = self.track_list[*num].split("  ").collect();
-                            let path = str[1].to_string();
-                            path
                         }
                     }
-                }
+                    Track::Play(_path) => match current.as_str() {
+                        "Back" => {
+                            self.state = State::TrackList(Track::List);
+                            self.get_track_list()
+                        }
+                        _ => self.get_error(),
+                    },
+                },
             };
-            Console::clear();
-            println!("{}", content);
+            run(&content);
+            current = mut_menu(&content).selected_item_name().to_string();
         }
     }
 }
