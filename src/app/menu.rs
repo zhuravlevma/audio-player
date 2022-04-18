@@ -3,6 +3,7 @@ use crate::utils::console::ConsoleError;
 use std::fs;
 use std::io::BufReader;
 use std::sync::Arc;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenu, TerminalMenuItem};
 use thiserror::Error;
 
@@ -42,7 +43,15 @@ impl Menu {
         }
     }
 
-    fn get_main(&self) -> TerminalMenu {
+    fn get_main(&self, current_track: &str, s: u64) -> TerminalMenu {
+        if s != 0 {
+            return menu(vec![
+                label(format!("Track {}  {} s", current_track, s)),
+                label("Menu"),
+                button("Track list"),
+                button("Exit"),
+            ]);
+        }
         menu(vec![label("Menu"), button("Track list"), button("Exit")])
     }
 
@@ -50,7 +59,14 @@ impl Menu {
         menu(vec![label("Error"), button("Repeat")])
     }
 
-    fn get_track_list(&self) -> TerminalMenu {
+    fn get_track_list(&self, current_track: &str, s: u64) -> TerminalMenu {
+        if s != 0 {
+            let mut items: Vec<TerminalMenuItem> =
+                vec![label(format!("Track {}  {} s", current_track, s))];
+            self.track_list.iter().for_each(|el| items.push(button(el)));
+            items.push(button("Back"));
+            return menu(items);
+        }
         let mut items: Vec<TerminalMenuItem> = self.track_list.iter().map(button).collect();
         items.push(button("Back"));
         menu(items)
@@ -67,20 +83,28 @@ impl Menu {
     pub fn start(&mut self) -> Result<(), MenuError> {
         let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
         let mut sink = Arc::new(rodio::Sink::try_new(&handle).unwrap());
-        let start_menu = self.get_main();
+        let mut secs: u64 = 0;
+        let mut current_path = String::new();
+        let start_menu = self.get_main(&current_path, secs);
         run(&start_menu);
         let mut current = mut_menu(&start_menu).selected_item_name().to_string();
-
+        let mut start_duration: Duration = Duration::from_secs(0);
         loop {
+            let now = SystemTime::now();
+            let ms = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
+            if !start_duration.is_zero() {
+                // println!("Time {:?}",ms.as_secs() - start_duration.as_secs());
+                secs = ms.as_secs() - start_duration.as_secs();
+            }
             let content = match &self.state {
                 State::Main => match current.as_str() {
                     "Repeat" => {
                         self.state = State::TrackList(Track::List);
-                        self.get_track_list()
+                        self.get_track_list(&current_path, secs)
                     }
                     "Track list" => {
                         self.state = State::TrackList(Track::List);
-                        self.get_track_list()
+                        self.get_track_list(&current_path, secs)
                     }
                     "Exit" => return Ok(()),
                     _ => self.get_error(),
@@ -89,10 +113,10 @@ impl Menu {
                     Track::List => {
                         if current.as_str() == "Back" {
                             self.state = State::Main;
-                            self.get_main()
+                            self.get_main(&current_path, secs)
                         } else if current.as_str() == "Repeat" {
                             self.state = State::TrackList(Track::List);
-                            self.get_track_list()
+                            self.get_track_list(&current_path, secs)
                         } else {
                             let track = self.track_list.iter().find(|&el| el == current.as_str());
                             match track {
@@ -104,6 +128,13 @@ impl Menu {
                                     sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
                                     self.player.append(sink.clone());
                                     self.state = State::TrackList(Track::Play(path.clone()));
+                                    let now = SystemTime::now();
+                                    let ms = now
+                                        .duration_since(UNIX_EPOCH)
+                                        .expect("Time went backwards");
+                                    // println!("{:?}", ms);
+                                    current_path = path.clone();
+                                    start_duration = ms;
                                     self.get_track(path.clone())
                                 }
                             }
@@ -112,7 +143,7 @@ impl Menu {
                     Track::Play(_path) => match current.as_str() {
                         "Back" => {
                             self.state = State::TrackList(Track::List);
-                            self.get_track_list()
+                            self.get_track_list(&current_path, secs)
                         }
                         _ => self.get_error(),
                     },
