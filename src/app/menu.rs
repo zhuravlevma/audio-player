@@ -1,12 +1,14 @@
 use crate::app::player::Player;
 use crate::utils::console::ConsoleError;
 use std::fs;
-use std::io::BufReader;
+use std::fs::File;
+use std::io::{BufReader, Sink};
 use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use rodio::OutputStreamHandle;
 use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenu, TerminalMenuItem};
 use thiserror::Error;
-
+use crate::app::time::{get_interval_secs, time_ms_now};
 pub enum Track {
     List,
     Play(String),
@@ -80,21 +82,32 @@ impl Menu {
         ])
     }
 
+    pub fn get_sink(&self, handle: &OutputStreamHandle) -> Arc<rodio::Sink> {
+        Arc::new(rodio::Sink::try_new(&handle).unwrap())
+    }
+
+    pub fn start_menu(&self) -> TerminalMenu {
+        let start_menu = self.get_main(&String::new(), 0);
+        run(&start_menu);
+        start_menu
+    }
+
+    pub fn append_track(&self, track: &Arc<rodio::Sink>, path: &str) {
+        let file = self.get_file(path);
+        track.append(rodio::Decoder::new(BufReader::new(file)).unwrap())
+    }
+
     pub fn start(&mut self) -> Result<(), MenuError> {
         let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
-        let mut sink = Arc::new(rodio::Sink::try_new(&handle).unwrap());
+        let mut sink:Option<Arc<rodio::Sink>> = Option::None;
         let mut secs: u64 = 0;
         let mut current_path = String::new();
-        let start_menu = self.get_main(&current_path, secs);
-        run(&start_menu);
+        let start_menu = self.start_menu();
         let mut current = mut_menu(&start_menu).selected_item_name().to_string();
         let mut start_duration: Duration = Duration::from_secs(0);
         loop {
-            let now = SystemTime::now();
-            let ms = now.duration_since(UNIX_EPOCH).expect("Time went backwards");
             if !start_duration.is_zero() {
-                // println!("Time {:?}",ms.as_secs() - start_duration.as_secs());
-                secs = ms.as_secs() - start_duration.as_secs();
+                secs = get_interval_secs(start_duration, time_ms_now());
             }
             let content = match &self.state {
                 State::Main => match current.as_str() {
@@ -122,20 +135,26 @@ impl Menu {
                             match track {
                                 None => self.get_error(),
                                 Some(path) => {
-                                    sink.stop();
-                                    sink = Arc::new(rodio::Sink::try_new(&handle).unwrap());
-                                    let file = std::fs::File::open(path).unwrap();
-                                    sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
-                                    self.player.append(sink.clone());
-                                    self.state = State::TrackList(Track::Play(path.clone()));
-                                    let now = SystemTime::now();
-                                    let ms = now
-                                        .duration_since(UNIX_EPOCH)
-                                        .expect("Time went backwards");
-                                    // println!("{:?}", ms);
-                                    current_path = path.clone();
-                                    start_duration = ms;
-                                    self.get_track(path.clone())
+                                    match &mut sink {
+                                        None => {
+                                            sink = Some(self.get_sink(&handle));
+                                            match sink {
+                                                None => return Ok(()),
+                                                Some(ref sink) => {
+                                                    start_duration = time_ms_now();
+                                                    current_path = path.clone();
+                                                    self.playing(sink, path.clone())
+                                                }
+                                            }
+                                        }
+                                        Some(sink) => {
+                                            sink.stop();
+                                            *sink = self.get_sink(&handle);
+                                            start_duration = time_ms_now();
+                                            current_path = path.clone();
+                                            self.playing(sink, path.clone())
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -152,5 +171,16 @@ impl Menu {
             run(&content);
             current = mut_menu(&content).selected_item_name().to_string();
         }
+    }
+
+    pub fn get_file(&self, path: &str) -> File {
+        std::fs::File::open(path).unwrap()
+    }
+
+    pub fn playing(&mut self, sink: &Arc<rodio::Sink>, path: String) -> TerminalMenu {
+        self.append_track(sink, &path);
+        self.player.append(sink.clone());
+        self.state = State::TrackList(Track::Play(path.clone()));
+        self.get_track(path.clone())
     }
 }
