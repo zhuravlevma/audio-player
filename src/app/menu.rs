@@ -1,5 +1,7 @@
 use crate::app::player::Player;
 use crate::app::time::{get_interval_secs, time_ms_now};
+use crate::domains::menu_entity::{MenuEntity, MenuState, TrackState};
+use crate::domains::playlist_entity::Playlist;
 use crate::utils::console::ConsoleError;
 use crate::views::error_view::ErrorView;
 use crate::views::menu_view::MenuView;
@@ -13,8 +15,6 @@ use std::sync::Arc;
 use std::time::Duration;
 use terminal_menu::{mut_menu, run, TerminalMenu};
 use thiserror::Error;
-use crate::domains::menu_entity::{MenuEntity, MenuState, TrackState};
-use crate::domains::playlist_entity::Playlist;
 
 #[derive(Error, Debug)]
 pub enum MenuError {
@@ -86,7 +86,9 @@ impl Menu {
                                                 let path = track.track_path.clone();
                                                 self.append_track(sink, &path);
                                                 self.player.append(sink.clone());
-                                                menu.change_state(MenuState::TrackList(TrackState::Play(path.clone())));
+                                                menu.change_state(MenuState::TrackList(
+                                                    TrackState::Play(path.clone()),
+                                                ));
                                                 TrackView::get(path)
                                             }
                                         }
@@ -98,7 +100,9 @@ impl Menu {
                                         current_path = track.track_path.clone();
                                         self.append_track(sink, &current_path);
                                         self.player.append(sink.clone());
-                                        menu.change_state(MenuState::TrackList(TrackState::Play(current_path.clone())));
+                                        menu.change_state(MenuState::TrackList(TrackState::Play(
+                                            current_path.clone(),
+                                        )));
                                         TrackView::get(current_path.clone())
                                     }
                                 },

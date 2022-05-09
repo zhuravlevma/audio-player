@@ -1,7 +1,7 @@
-use std::fs;
-use terminal_menu::TerminalMenu;
 use crate::domains::track_entity::TrackEntity;
 use crate::views::playlist_view::PlaylistView;
+use std::fs;
+use terminal_menu::TerminalMenu;
 
 pub struct Playlist {
     current_track: Option<TrackEntity>,
@@ -17,18 +17,14 @@ impl Playlist {
             .collect();
         Self {
             current_track: Option::None,
-            tracks
+            tracks,
         }
     }
 
     pub fn get_track_list(&self) -> TerminalMenu {
         match &self.current_track {
-            None => {
-                PlaylistView::get("", 0, &self.tracks)
-            }
-            Some(track) => {
-                PlaylistView::get(&track.track_path, track.get_start(), &self.tracks)
-            }
+            None => PlaylistView::get("", 0, &self.tracks),
+            Some(track) => PlaylistView::get(&track.track_path, track.get_start(), &self.tracks),
         }
     }
 
@@ -40,9 +36,7 @@ impl Playlist {
         let track = self.tracks.iter().find(|&el| el.track_path == track_path);
         match track {
             None => {}
-            Some(track) => {
-                self.current_track = Some(track.clone())
-            }
+            Some(track) => self.current_track = Some(track.clone()),
         }
     }
 }

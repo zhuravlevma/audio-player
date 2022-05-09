@@ -1,5 +1,5 @@
-use terminal_menu::{button, label, menu, TerminalMenu, TerminalMenuItem};
 use crate::domains::track_entity::TrackEntity;
+use terminal_menu::{button, label, menu, TerminalMenu, TerminalMenuItem};
 
 pub struct PlaylistView {}
 
@@ -8,11 +8,16 @@ impl PlaylistView {
         if s != 0 {
             let mut items: Vec<TerminalMenuItem> =
                 vec![label(format!("Track {}  {} s", current_track, s))];
-            track_list.iter().for_each(|el| items.push(button(el.track_path.clone())));
+            track_list
+                .iter()
+                .for_each(|el| items.push(button(el.track_path.clone())));
             items.push(button("Back"));
             return menu(items);
         }
-        let mut items: Vec<TerminalMenuItem> = track_list.iter().map(|el| button(el.track_path.clone())).collect();
+        let mut items: Vec<TerminalMenuItem> = track_list
+            .iter()
+            .map(|el| button(el.track_path.clone()))
+            .collect();
         items.push(button("Back"));
         menu(items)
     }

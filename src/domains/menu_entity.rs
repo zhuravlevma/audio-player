@@ -1,6 +1,6 @@
-use terminal_menu::{mut_menu, run, TerminalMenu};
 use crate::domains::track_entity::TrackEntity;
 use crate::views::menu_view::MenuView;
+use terminal_menu::{mut_menu, run, TerminalMenu};
 
 pub enum TrackState {
     List,

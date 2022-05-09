@@ -1,5 +1,5 @@
-use std::time::Duration;
 use crate::app::time::{get_interval_secs, time_ms_now};
+use std::time::Duration;
 
 #[derive(Clone, Debug)]
 pub struct TrackEntity {
@@ -21,9 +21,7 @@ impl TrackEntity {
     pub fn get_start(&self) -> u64 {
         match self.time_of_start {
             None => 0,
-            Some(time) => {
-                get_interval_secs(time, time_ms_now())
-            }
+            Some(time) => get_interval_secs(time, time_ms_now()),
         }
     }
 
