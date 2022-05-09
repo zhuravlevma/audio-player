@@ -33,4 +33,4 @@ impl App {
 mod login;
 mod menu;
 mod player;
-mod time;
+pub(crate) mod time;
