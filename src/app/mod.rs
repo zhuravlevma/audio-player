@@ -34,5 +34,3 @@ mod login;
 mod menu;
 mod player;
 mod time;
-mod music;
-mod handler;

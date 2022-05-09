@@ -1,4 +1,3 @@
-use std::io;
 use thiserror::Error;
 
 pub struct Console {}
@@ -10,14 +9,6 @@ pub enum ConsoleError {
 }
 
 impl Console {
-    pub fn input_line() -> Result<String, ConsoleError> {
-        let mut buffer = String::new();
-        let stdin = io::stdin(); // We get `Stdin` here.
-        stdin.read_line(&mut buffer)?;
-        buffer.pop();
-        Ok(buffer)
-    }
-
     pub fn clear() {
         print!("\x1B[2J\x1B[1;1H");
     }

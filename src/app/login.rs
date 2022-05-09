@@ -2,7 +2,6 @@ use crate::utils::console::{Console, ConsoleError};
 use thiserror::Error;
 
 pub struct Login {
-    username: String,
     password: String,
 }
 
@@ -17,17 +16,12 @@ pub enum LoginError {
 impl Login {
     pub fn new() -> Result<Self, LoginError> {
         Console::clear();
-        println!("Please, input your username: ");
-        let username = Console::input_line()?;
         println!("Password: ");
-        let password = Console::input_line()?;
-        Ok(Self { username, password })
+        let password = rpassword::read_password().unwrap();
+        Ok(Self { password })
     }
 
     pub fn validate(&self) -> Result<(), LoginError> {
-        if !self.username.eq("admin") {
-            return Err(LoginError::Invalid("username".to_string()));
-        }
         if !self.password.eq("admin") {
             return Err(LoginError::Invalid("password".to_string()));
         }
