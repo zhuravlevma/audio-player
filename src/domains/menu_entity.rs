@@ -13,7 +13,7 @@ pub enum MenuState {
 }
 
 pub struct MenuEntity {
-    state: MenuState,
+    pub state: MenuState,
 }
 
 impl MenuEntity {

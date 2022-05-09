@@ -14,16 +14,7 @@ use std::time::Duration;
 use terminal_menu::{mut_menu, run, TerminalMenu};
 use thiserror::Error;
 use crate::domains::menu_entity::{MenuEntity, MenuState, TrackState};
-
-pub enum Track {
-    List,
-    Play(String),
-}
-
-pub enum State {
-    Main,
-    TrackList(Track),
-}
+use crate::domains::playlist_entity::Playlist;
 
 #[derive(Error, Debug)]
 pub enum MenuError {
@@ -32,22 +23,15 @@ pub enum MenuError {
 }
 
 pub struct Menu {
-    state: State,
-    track_list: Vec<String>,
+    playlist: Playlist,
     player: Player,
 }
 
 impl Menu {
     pub fn new() -> Self {
-        let paths = fs::read_dir("./assets").unwrap();
-        let res: Vec<String> = paths
-            .into_iter()
-            .map(|path| path.unwrap().path().display().to_string())
-            .collect();
         Self {
-            state: State::Main,
-            track_list: res,
             player: Player::new(),
+            playlist: Playlist::new("./assets"),
         }
     }
 
@@ -56,7 +40,7 @@ impl Menu {
     }
 
     pub fn append_track(&self, track: &Arc<rodio::Sink>, path: &str) {
-        let file = self.get_file(path);
+        let file = std::fs::File::open(path).unwrap();
         track.append(rodio::Decoder::new(BufReader::new(file)).unwrap())
     }
 
@@ -73,44 +57,37 @@ impl Menu {
             if !start_duration.is_zero() {
                 secs = get_interval_secs(start_duration, time_ms_now());
             }
-            let content = match &self.state {
-                State::Main => match current.as_str() {
-                    "Repeat" => {
-                        self.state = State::TrackList(Track::List);
-                        menu.change_state(MenuState::TrackList(TrackState::List));
-                        PlaylistView::get(&current_path, secs, &self.track_list)
-                    }
+            let content = match &menu.state {
+                MenuState::Main => match current.as_str() {
                     "Track list" => {
-                        self.state = State::TrackList(Track::List);
                         menu.change_state(MenuState::TrackList(TrackState::List));
-                        PlaylistView::get(&current_path, secs, &self.track_list)
+                        self.playlist.get_track_list()
                     }
                     "Exit" => return Ok(()),
                     _ => ErrorView::get(),
                 },
-                State::TrackList(track) => match track {
-                    Track::List => {
+                MenuState::TrackList(track) => match track {
+                    TrackState::List => {
                         if current.as_str() == "Back" {
-                            self.state = State::Main;
                             menu.change_state(MenuState::Main);
                             MenuView::get(&current_path, secs)
-                        } else if current.as_str() == "Repeat" {
-                            self.state = State::TrackList(Track::List);
-                            menu.change_state(MenuState::TrackList(TrackState::List));
-                            PlaylistView::get(&current_path, secs, &self.track_list)
                         } else {
-                            let track = self.track_list.iter().find(|&el| el == current.as_str());
+                            let track = self.playlist.find_track(&current);
                             match track {
                                 None => ErrorView::get(),
-                                Some(path) => match &mut sink {
+                                Some(track) => match &mut sink {
                                     None => {
                                         sink = Some(self.get_sink(&handle));
                                         match sink {
                                             None => return Ok(()),
                                             Some(ref sink) => {
                                                 start_duration = time_ms_now();
-                                                current_path = path.clone();
-                                                self.playing(sink, path.clone())
+                                                current_path = track.track_path.clone();
+                                                let path = track.track_path.clone();
+                                                self.append_track(sink, &path);
+                                                self.player.append(sink.clone());
+                                                menu.change_state(MenuState::TrackList(TrackState::Play(path.clone())));
+                                                TrackView::get(path)
                                             }
                                         }
                                     }
@@ -118,18 +95,20 @@ impl Menu {
                                         sink.stop();
                                         *sink = self.get_sink(&handle);
                                         start_duration = time_ms_now();
-                                        current_path = path.clone();
-                                       self.playing(sink, path.clone())
+                                        current_path = track.track_path.clone();
+                                        self.append_track(sink, &current_path);
+                                        self.player.append(sink.clone());
+                                        menu.change_state(MenuState::TrackList(TrackState::Play(current_path.clone())));
+                                        TrackView::get(current_path.clone())
                                     }
                                 },
                             }
                         }
                     }
-                    Track::Play(_path) => match current.as_str() {
+                    TrackState::Play(_path) => match current.as_str() {
                         "Back" => {
-                            self.state = State::TrackList(Track::List);
                             menu.change_state(MenuState::TrackList(TrackState::List));
-                            PlaylistView::get(&current_path, secs, &self.track_list)
+                            self.playlist.get_track_list()
                         }
                         _ => ErrorView::get(),
                     },
@@ -137,17 +116,5 @@ impl Menu {
             };
             current = menu.run(content);
         }
-    }
-
-    pub fn get_file(&self, path: &str) -> File {
-        std::fs::File::open(path).unwrap()
-    }
-
-    pub fn playing(&mut self, sink: &Arc<rodio::Sink>, path: String) -> TerminalMenu {
-        self.append_track(sink, &path);
-        self.player.append(sink.clone());
-        self.state = State::TrackList(Track::Play(path.clone()));
-        // menu.change_state(MenuState::TrackList(TrackState::Play(path.clone())));
-        TrackView::get(path)
     }
 }
