@@ -55,3 +55,21 @@
     Track --> BackToPlayList
     BackToPlayList --> Playlist
 ```
+
+### Entities
+```mermaid
+    flowchart LR
+    App -- include --> CurrentTrack
+    App -- include --> Player
+    App -- include --> Playlist
+    App -- include --> GenresPlaylist -- include --> Tracks -- include --> Track
+    App -- include --> OtherPlaylist -- include --> Tracks -- include --> Track
+    Playlist -- props --> CurrentTrack
+    Player -- props --> CurrentTrack
+    GenresPlaylist -- props --> CurrentTrack
+    OtherPlaylist -- props --> CurrentTrack
+    Playlist -- include --> Tracks -- include --> Track
+    
+    
+    style Playlist fill:#7f7fff,stroke:#333,stroke-width:4px
+```

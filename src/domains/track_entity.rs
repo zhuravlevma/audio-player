@@ -3,7 +3,7 @@ use std::time::Duration;
 
 #[derive(Clone, Debug)]
 pub struct TrackEntity {
-    pub track_path: String,
+    track_path: String,
     time_of_start: Option<Duration>,
 }
 
@@ -14,7 +14,7 @@ impl TrackEntity {
             time_of_start: Option::None,
         }
     }
-    pub fn get_path(&self) -> &str {
+    pub fn get_path(&self) -> &String {
         &self.track_path
     }
 

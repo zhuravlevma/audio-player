@@ -10,13 +10,13 @@ impl PlaylistView {
                 vec![label(format!("Track {}  {} s", current_track, s))];
             track_list
                 .iter()
-                .for_each(|el| items.push(button(el.track_path.clone())));
+                .for_each(|el| items.push(button(el.get_path().to_string())));
             items.push(button("Back"));
             return menu(items);
         }
         let mut items: Vec<TerminalMenuItem> = track_list
             .iter()
-            .map(|el| button(el.track_path.clone()))
+            .map(|el| button(el.get_path().to_string()))
             .collect();
         items.push(button("Back"));
         menu(items)
