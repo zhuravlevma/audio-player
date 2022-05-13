@@ -1,7 +1,9 @@
 use crate::app::player::Player;
 use crate::app::time::{get_interval_secs, time_ms_now};
+use crate::domains::main_menu_entity::MainMenuEntity;
 use crate::domains::menu_entity::{MenuEntity, MenuState, TrackState};
 use crate::domains::playlist_entity::Playlist;
+use crate::domains::track_entity::TrackEntity;
 use crate::utils::console::ConsoleError;
 use crate::views::error_view::ErrorView;
 use crate::views::menu_view::MenuView;
@@ -16,8 +18,6 @@ use std::thread::sleep;
 use std::time::Duration;
 use terminal_menu::{mut_menu, run, TerminalMenu};
 use thiserror::Error;
-use crate::domains::main_menu_entity::MainMenuEntity;
-use crate::domains::track_entity::TrackEntity;
 
 #[derive(Error, Debug)]
 pub enum MenuError {
@@ -54,29 +54,25 @@ impl Menu {
         loop {
             let res: Vec<&str> = point.split("/|/").collect();
             point = match res[0] {
-                "main" => {
-                    match res[1] {
-                        "Exit" => {
-                            return Ok(())
-                        }
-                        _ => {
-                            "main/|/error".to_string()
-                        }
-                    }
-                }
-                "playlist" => {
-                    match res[1] {
-                        "Back" => {
-                            self.main.run(self.main.get_menu())
-                        },
-                        _ => {
-                            let track = self.playlist.find_track(res[1]).unwrap();
-                            self.player.play_track(track);
-                            "track/|/show".to_string()
-                        }
+                "main" => match res[1] {
+                    "Exit" => return Ok(()),
+                    _ => "main/|/error".to_string(),
+                },
+                "playlist" => match res[1] {
+                    "Back" => self.main.run(self.main.get_menu()),
+                    "List" => self.playlist.run(self.playlist.get_track_list()),
+                    _ => {
+                        let track = self.playlist.find_track(res[1]).unwrap();
+                        self.player.play_track(track);
+                        "track/|/Show".to_string()
                     }
                 },
-                _ => "error".to_string()
+                "track" => match res[1] {
+                    "Show" => self.player.run(self.player.get_current_track()),
+                    "Back" => "playlist/|/List".to_string(),
+                    _ => "track/|/Error".to_string(),
+                },
+                _ => "error".to_string(),
             }
         }
         // println!("{}", self.playlist.run(self.playlist.get_track_list()));

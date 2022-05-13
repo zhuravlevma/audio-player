@@ -1,7 +1,7 @@
 use crate::app::time::{get_interval_secs, time_ms_now};
+use crate::views::menu_view::MenuView;
 use std::time::Duration;
 use terminal_menu::{mut_menu, run, TerminalMenu};
-use crate::views::menu_view::MenuView;
 
 #[derive(Clone, Debug)]
 pub struct MainMenuEntity {}
@@ -17,6 +17,9 @@ impl MainMenuEntity {
 
     pub fn run(&self, terminal_menu: TerminalMenu) -> String {
         run(&terminal_menu);
-        format!("main/|/{}", mut_menu(&terminal_menu).selected_item_name().to_string())
+        format!(
+            "main/|/{}",
+            mut_menu(&terminal_menu).selected_item_name().to_string()
+        )
     }
 }

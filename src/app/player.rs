@@ -1,11 +1,14 @@
+use crate::app::menu::Menu;
+use crate::app::time::{get_interval_secs, time_ms_now};
+use crate::domains::track_entity::TrackEntity;
+use crate::views::track_view::TrackView;
+use rodio::{OutputStream, OutputStreamHandle};
 use std::fmt::format;
 use std::io::BufReader;
 use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
-use rodio::{OutputStream, OutputStreamHandle};
-use crate::app::time::{get_interval_secs, time_ms_now};
-use crate::domains::track_entity::TrackEntity;
+use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenu};
 
 pub struct Player {
     pub handle: (OutputStream, OutputStreamHandle),
@@ -28,7 +31,8 @@ impl Player {
 
     fn append_track(&self, track: &TrackEntity) {
         let file = std::fs::File::open(track.get_path()).unwrap();
-        self.current_sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap())
+        self.current_sink
+            .append(rodio::Decoder::new(BufReader::new(file)).unwrap())
     }
 
     fn clear(&mut self) {
@@ -39,7 +43,7 @@ impl Player {
     pub fn get_time(&self) -> u64 {
         match self.time_of_start {
             None => 0,
-            Some(time_of_start) => get_interval_secs(time_of_start, time_ms_now())
+            Some(time_of_start) => get_interval_secs(time_of_start, time_ms_now()),
         }
     }
 
@@ -50,6 +54,20 @@ impl Player {
                 format!("Track path is {}    {}s", track.get_path(), self.get_time())
             }
         }
+    }
+
+    pub fn get_current_track(&self) -> TerminalMenu {
+        match &self.current_track {
+            None => menu(vec![label("error"), button("Back")]),
+            Some(track) => TrackView::get(track.get_path().clone()),
+        }
+    }
+    pub fn run(&self, terminal_menu: TerminalMenu) -> String {
+        run(&terminal_menu);
+        format!(
+            "track/|/{}",
+            mut_menu(&terminal_menu).selected_item_name().to_string()
+        )
     }
 
     pub fn play_track(&mut self, track: &TrackEntity) {

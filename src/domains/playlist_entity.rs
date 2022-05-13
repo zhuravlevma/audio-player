@@ -1,10 +1,11 @@
 use crate::domains::track_entity::TrackEntity;
 use crate::views::playlist_view::PlaylistView;
+use crate::views::track_view::TrackView;
 use std::fs;
 use terminal_menu::{mut_menu, run, TerminalMenu};
 
 pub struct Playlist {
-    current_track: Option<TrackEntity>,
+    pub current_track: Option<TrackEntity>,
     tracks: Vec<TrackEntity>,
 }
 
@@ -33,20 +34,25 @@ impl Playlist {
     }
 
     pub fn change_track(&mut self, track_path: String) {
-        let track = self.tracks.iter().find(|&el| el.get_path().to_string() == track_path);
+        let track = self
+            .tracks
+            .iter()
+            .find(|&el| el.get_path().to_string() == track_path);
         match track {
             None => {}
             Some(track) => self.current_track = Some(track.clone()),
         }
     }
 
-    // pub fn routing(&self, item: &str, command: &str) -> TerminalMenu {
-    //
-    // }
-
+    pub fn get_current_track(&self) -> TerminalMenu {
+        TrackView::get(self.current_track.as_ref().unwrap().get_path().clone())
+    }
 
     pub fn run(&self, terminal_menu: TerminalMenu) -> String {
         run(&terminal_menu);
-        format!("playlist/|/{}", mut_menu(&terminal_menu).selected_item_name().to_string())
+        format!(
+            "playlist/|/{}",
+            mut_menu(&terminal_menu).selected_item_name().to_string()
+        )
     }
 }
