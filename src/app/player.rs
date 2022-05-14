@@ -9,6 +9,7 @@ use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
 use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenu};
+use crate::domains::route::Route;
 
 pub struct Player {
     pub handle: (OutputStream, OutputStreamHandle),
@@ -56,10 +57,20 @@ impl Player {
         }
     }
 
-    pub fn get_current_track(&self) -> TerminalMenu {
+    pub fn get_current_track(&self) -> Route {
         match &self.current_track {
-            None => menu(vec![label("error"), button("Back")]),
-            Some(track) => TrackView::get(track.get_path().clone()),
+            None => {
+                let t = menu(vec![label("error"), button("Back")]);
+                run(&t);
+                let s = mut_menu(&t).selected_item_name().to_string();
+                Route::new("track", s)
+            },
+            Some(track) => {
+                let t = TrackView::get(track.get_path().clone());
+                run(&t);
+                let s = mut_menu(&t).selected_item_name().to_string();
+                Route::new("track", s)
+            },
         }
     }
     pub fn run(&self, terminal_menu: TerminalMenu) -> String {

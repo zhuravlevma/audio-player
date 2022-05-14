@@ -3,6 +3,7 @@ use crate::views::playlist_view::PlaylistView;
 use crate::views::track_view::TrackView;
 use std::fs;
 use terminal_menu::{mut_menu, run, TerminalMenu};
+use crate::domains::route::Route;
 
 pub struct Playlist {
     pub current_track: Option<TrackEntity>,
@@ -22,10 +23,20 @@ impl Playlist {
         }
     }
 
-    pub fn get_track_list(&self) -> TerminalMenu {
+    pub fn get_track_list(&self) -> Route {
         match &self.current_track {
-            None => PlaylistView::get("", 0, &self.tracks),
-            Some(track) => PlaylistView::get(&track.get_path(), track.get_start(), &self.tracks),
+            None => {
+                let t = PlaylistView::get("", 0, &self.tracks);
+                run(&t);
+                let s = mut_menu(&t).selected_item_name().to_string();
+                Route::new("playlist", s)
+            },
+            Some(track) => {
+                let t = PlaylistView::get(&track.get_path(), track.get_start(), &self.tracks);
+                run(&t);
+                let s = mut_menu(&t).selected_item_name().to_string();
+                Route::new("playlist", s)
+            },
         }
     }
 
@@ -42,10 +53,6 @@ impl Playlist {
             None => {}
             Some(track) => self.current_track = Some(track.clone()),
         }
-    }
-
-    pub fn get_current_track(&self) -> TerminalMenu {
-        TrackView::get(self.current_track.as_ref().unwrap().get_path().clone())
     }
 
     pub fn run(&self, terminal_menu: TerminalMenu) -> String {

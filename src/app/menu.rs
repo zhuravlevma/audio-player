@@ -18,6 +18,7 @@ use std::thread::sleep;
 use std::time::Duration;
 use terminal_menu::{mut_menu, run, TerminalMenu};
 use thiserror::Error;
+use crate::domains::route::Route;
 
 #[derive(Error, Debug)]
 pub enum MenuError {
@@ -49,31 +50,65 @@ impl Menu {
         // sleep(Duration::from_secs(9));
         // println!("{}", player.get_current_state());
         // let r = self.playlist.get_track_list();
-        let mut point = self.playlist.run(self.playlist.get_track_list());
+        let mut point = self.playlist.get_track_list();
 
         loop {
-            let res: Vec<&str> = point.split("/|/").collect();
-            point = match res[0] {
-                "main" => match res[1] {
-                    "Exit" => return Ok(()),
-                    _ => "main/|/error".to_string(),
-                },
-                "playlist" => match res[1] {
-                    "Back" => self.main.run(self.main.get_menu()),
-                    "List" => self.playlist.run(self.playlist.get_track_list()),
-                    _ => {
-                        let track = self.playlist.find_track(res[1]).unwrap();
-                        self.player.play_track(track);
-                        "track/|/Show".to_string()
+            point = match point.route_path.as_ref() {
+                "main" => {
+                    match point.command.as_ref() {
+                        "Exit" => return Ok(()),
+                        _ => Route::new("main", "error"),
                     }
                 },
-                "track" => match res[1] {
-                    "Show" => self.player.run(self.player.get_current_track()),
-                    "Back" => "playlist/|/List".to_string(),
-                    _ => "track/|/Error".to_string(),
+                "playlist" => {
+                    match point.command.as_ref() {
+                        "Back" => self.main.get_menu(),
+                        "List" => self.playlist.get_track_list(),
+                        _ => {
+                            let track = self.playlist.find_track(point.command.as_ref()).unwrap();
+                            self.player.play_track(track);
+                            Route::new("track", "Show")
+                        }
+                    }
                 },
-                _ => "error".to_string(),
+                "track" => {
+                    match point.command.as_ref() {
+                        "Show" => {
+                            self.player.get_current_track()
+                        },
+                        "Back" => {
+                            Route::new("playlist", "List")
+                        },
+                        _ => {
+                            Route::new("track", "error")
+                        }
+                    }
+                }
+                _ => {
+                    Route::new("error", "error")
+                }
             }
+            // point = match res[0] {
+            //     "main" => match res[1] {
+            //         "Exit" => return Ok(()),
+            //         _ => "main/|/error".to_string(),
+            //     },
+            //     "playlist" => match res[1] {
+            //         "Back" => self.main.run(self.main.get_menu()),
+            //         "List" => self.playlist.run(self.playlist.get_track_list()),
+            //         _ => {
+            //             let track = self.playlist.find_track(res[1]).unwrap();
+            //             self.player.play_track(track);
+            //             "track/|/Show".to_string()
+            //         }
+            //     },
+            //     "track" => match res[1] {
+            //         "Show" => self.player.run(self.player.get_current_track()),
+            //         "Back" => "playlist/|/List".to_string(),
+            //         _ => "track/|/Error".to_string(),
+            //     },
+            //     _ => "error".to_string(),
+            // }
         }
         // println!("{}", self.playlist.run(self.playlist.get_track_list()));
 
