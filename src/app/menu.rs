@@ -18,6 +18,7 @@ use std::thread::sleep;
 use std::time::Duration;
 use terminal_menu::{mut_menu, run, TerminalMenu};
 use thiserror::Error;
+use crate::domains::playlist_controller::PlaylistController;
 use crate::domains::route::Route;
 
 #[derive(Error, Debug)]
@@ -50,8 +51,9 @@ impl Menu {
         // sleep(Duration::from_secs(9));
         // println!("{}", player.get_current_state());
         // let r = self.playlist.get_track_list();
-        let mut point = self.playlist.get_track_list();
-
+        let playlist_controller = PlaylistController::new(Playlist::new("./assets"));
+        // let mut point = self.playlist.get_track_list();
+        let mut point = playlist_controller.get_track_list(Route::new("", ""));
         loop {
             point = match point.route_path.as_ref() {
                 "main" => {
@@ -63,11 +65,12 @@ impl Menu {
                 "playlist" => {
                     match point.command.as_ref() {
                         "Back" => self.main.get_menu(),
-                        "List" => self.playlist.get_track_list(),
+                        "List" => playlist_controller.get_track_list(point),
                         _ => {
-                            let track = self.playlist.find_track(point.command.as_ref()).unwrap();
-                            self.player.play_track(track);
-                            Route::new("track", "Show")
+                            playlist_controller.play_track(point, &mut self.player)
+                            // let track = self.playlist.find_track(point.command.as_ref()).unwrap();
+                            // self.player.play_track(track);
+                            // Route::new("track", "Show")
                         }
                     }
                 },

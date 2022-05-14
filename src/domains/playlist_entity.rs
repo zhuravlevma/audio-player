@@ -23,6 +23,17 @@ impl Playlist {
         }
     }
 
+    pub fn get_track_listv2(&self) -> &Vec<TrackEntity> {
+        &self.tracks
+    }
+
+    pub fn get_current_track(&self) -> Option<&TrackEntity> {
+        match &self.current_track {
+            None => None,
+            Some(track) => Some(track)
+        }
+    }
+
     pub fn get_track_list(&self) -> Route {
         match &self.current_track {
             None => {
