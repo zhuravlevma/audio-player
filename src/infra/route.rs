@@ -1,3 +1,4 @@
+#[derive(Clone)]
 pub struct Route {
     pub route_path: String,
     pub command: String,
