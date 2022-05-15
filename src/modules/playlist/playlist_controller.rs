@@ -1,7 +1,6 @@
-use crate::app::player::Player;
-use crate::domains::playlist_entity::Playlist;
-use crate::domains::route::Route;
-use crate::domains::track_entity::TrackEntity;
+use crate::infra::route::Route;
+use crate::modules::player::player_entity::Player;
+use crate::modules::playlist::playlist_entity::Playlist;
 use crate::views::playlist_view::PlaylistView;
 
 pub struct PlaylistController {
@@ -10,27 +9,19 @@ pub struct PlaylistController {
 
 impl PlaylistController {
     pub fn new(playlist_service: Playlist) -> Self {
-        Self {
-            playlist_service
-        }
+        Self { playlist_service }
     }
     pub fn get_track_list(&self, _route_data: Route) -> Route {
         match self.playlist_service.get_current_track() {
             None => {
                 let tracks = self.playlist_service.get_track_listv2();
                 let result = PlaylistView::getv2("", 0, tracks);
-                Route::new(
-                    "playlist",
-                    result
-                )
+                Route::new("playlist", result)
             }
             Some(track) => {
                 let tracks = self.playlist_service.get_track_listv2();
                 let result = PlaylistView::getv2(track.get_path(), track.get_start(), tracks);
-                Route::new(
-                    "playlist",
-                    result
-                )
+                Route::new("playlist", result)
             }
         }
     }
@@ -40,5 +31,9 @@ impl PlaylistController {
         let track = self.playlist_service.find_track(&track_name).unwrap();
         player.play_track(track);
         Route::new("track", "Show")
+    }
+
+    pub fn back(&self) -> Route {
+        Route::new("main", "Show")
     }
 }

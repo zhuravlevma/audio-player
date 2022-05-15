@@ -1,4 +1,4 @@
-use crate::app::time::{get_interval_secs, time_ms_now};
+use crate::modules::player::time::{get_interval_secs, time_ms_now};
 use std::time::Duration;
 
 #[derive(Clone, Debug)]
@@ -23,9 +23,5 @@ impl TrackEntity {
             None => 0,
             Some(time) => get_interval_secs(time, time_ms_now()),
         }
-    }
-
-    pub fn play(&mut self) {
-        self.time_of_start = Some(Duration::from_secs(0));
     }
 }

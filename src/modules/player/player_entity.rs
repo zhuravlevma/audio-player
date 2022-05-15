@@ -1,15 +1,10 @@
-use crate::app::menu::Menu;
-use crate::app::time::{get_interval_secs, time_ms_now};
-use crate::domains::track_entity::TrackEntity;
-use crate::views::track_view::TrackView;
+use crate::modules::player::time::{get_interval_secs, time_ms_now};
+use crate::modules::track::track_entity::TrackEntity;
 use rodio::{OutputStream, OutputStreamHandle};
-use std::fmt::format;
 use std::io::BufReader;
 use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
-use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenu};
-use crate::domains::route::Route;
 
 pub struct Player {
     pub handle: (OutputStream, OutputStreamHandle),
@@ -41,44 +36,18 @@ impl Player {
         self.current_sink = Arc::new(rodio::Sink::try_new(&self.handle.1).unwrap());
     }
 
-    pub fn get_time(&self) -> u64 {
+    pub fn _get_time(&self) -> u64 {
         match self.time_of_start {
             None => 0,
             Some(time_of_start) => get_interval_secs(time_of_start, time_ms_now()),
         }
     }
 
-    pub fn get_current_state(&self) -> String {
+    pub fn get_current_trackv2(&self) -> Option<&TrackEntity> {
         match &self.current_track {
-            None => String::new(),
-            Some(track) => {
-                format!("Track path is {}    {}s", track.get_path(), self.get_time())
-            }
+            None => None,
+            Some(track) => Some(track),
         }
-    }
-
-    pub fn get_current_track(&self) -> Route {
-        match &self.current_track {
-            None => {
-                let t = menu(vec![label("error"), button("Back")]);
-                run(&t);
-                let s = mut_menu(&t).selected_item_name().to_string();
-                Route::new("track", s)
-            },
-            Some(track) => {
-                let t = TrackView::get(track.get_path().clone());
-                run(&t);
-                let s = mut_menu(&t).selected_item_name().to_string();
-                Route::new("track", s)
-            },
-        }
-    }
-    pub fn run(&self, terminal_menu: TerminalMenu) -> String {
-        run(&terminal_menu);
-        format!(
-            "track/|/{}",
-            mut_menu(&terminal_menu).selected_item_name().to_string()
-        )
     }
 
     pub fn play_track(&mut self, track: &TrackEntity) {

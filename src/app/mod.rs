@@ -1,10 +1,10 @@
-use crate::app::menu::{Menu, MenuError};
-use login::{Login, LoginError};
+use crate::app::run::{Run, RunError};
+use crate::modules::auth::login::{Login, LoginError};
 use thiserror::Error;
 
 pub struct App {
     login: Login,
-    menu: Menu,
+    routing: Run,
 }
 
 #[derive(Error, Debug)]
@@ -12,25 +12,22 @@ pub enum AppError {
     #[error("login error")]
     LoginError(#[from] LoginError),
     #[error("login error")]
-    MenuError(#[from] MenuError),
+    MenuError(#[from] RunError),
 }
 
 impl App {
     pub fn new() -> Result<Self, AppError> {
         Ok(Self {
             login: Login::new()?,
-            menu: Menu::new(),
+            routing: Run::new(),
         })
     }
 
     pub fn launch(&mut self) -> Result<(), AppError> {
         self.login.validate()?;
-        self.menu.start()?;
+        self.routing.start()?;
         Ok(())
     }
 }
 
-mod login;
-mod menu;
-pub mod player;
-pub(crate) mod time;
+mod run;
