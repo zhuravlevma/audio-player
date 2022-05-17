@@ -1,6 +1,6 @@
 use crate::app::routing::Routing;
 use crate::infra::route::Route;
-use crate::infra::router::Router;
+use crate::infra::router::{Router, RouterError};
 use crate::modules::main::main_controller::MainController;
 use crate::modules::player::player_entity::Player;
 use crate::modules::playlist::playlist_controller::PlaylistController;
@@ -8,11 +8,14 @@ use crate::modules::playlist::playlist_entity::Playlist;
 use crate::modules::track::track_controller::TrackController;
 use crate::utils::console::ConsoleError;
 use thiserror::Error;
+use crate::infra::next::Next;
 
 #[derive(Error, Debug)]
 pub enum RunError {
     #[error("io error")]
     IoError(#[from] ConsoleError),
+    #[error("route error")]
+    RouteError(#[from] RouterError),
 }
 
 pub struct Run {
@@ -34,7 +37,7 @@ impl Run {
 
     pub fn start(&mut self) -> Result<(), RunError> {
         let mut router = Router::new();
-        router.run(Route::new("playlist", "TrackList"));
+        router.run(Next::new(Route::new("playlist", "TrackList"), None));
         Ok(())
         // let mut point = Route::new("playlist", "TrackList");
         // loop {

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+use crate::infra::next::Next;
 use crate::infra::route::Route;
 use crate::infra::router::Router;
 use crate::modules::main::main_controller::MainController;
@@ -23,14 +25,17 @@ impl Routing {
         }
     }
 
-    pub fn routes(&mut self, path: &str, route: Route) -> Route {
+    pub fn routes(&mut self, path: &str, route: Next) -> Next {
         match path {
             "main/Show" => self.main_controller.show_menu(),
             "main/TrackList" => self.main_controller.playlist(),
             "main/Exit" => self.main_controller.exit(),
             "playlist/TrackList" => self.playlist_controller.get_track_list(route),
             "playlist/Back" => self.playlist_controller.back(),
-            _ => Route::new("", ""),
+            "playlist/*" => self.playlist_controller.play_track(route, &mut self.player),
+            "track/Show" => self.track_controller.get_current_track(&self.player),
+            "track/Back" => self.track_controller.back(),
+            _ => Next::new(Route::new("", ""), None),
         }
     }
 }

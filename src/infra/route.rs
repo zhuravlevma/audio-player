@@ -11,4 +11,8 @@ impl Route {
             command: command.as_ref().to_string(),
         }
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.route_path.is_empty() && self.command.is_empty()
+    }
 }
