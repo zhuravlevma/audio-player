@@ -13,7 +13,7 @@ impl MainController {
     }
 
     pub fn error(&self) -> Next {
-        Next::new( Route::new("main", "error"), None)
+        Next::new(Route::new("main", "error"), None)
     }
 
     pub fn show_menu(&self) -> Next {

@@ -8,14 +8,14 @@ impl MenuView {
             let t = menu(vec![
                 label(format!("Track {}  {} s", current_track, s)),
                 label("Menu"),
-                button("Track list"),
+                button("TrackList"),
                 button("Exit"),
             ]);
             run(&t);
             let s = mut_menu(&t).selected_item_name().to_string();
             return s;
         }
-        let t = menu(vec![label("Menu"), button("Track list"), button("Exit")]);
+        let t = menu(vec![label("Menu"), button("TrackList"), button("Exit")]);
         run(&t);
         let s = mut_menu(&t).selected_item_name().to_string();
         s
