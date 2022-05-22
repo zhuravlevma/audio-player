@@ -1,9 +1,15 @@
+use std::collections::{HashMap, HashSet};
 use terminal_menu::{button, label, menu, mut_menu, run};
 
 pub struct MenuView {}
 
 impl MenuView {
     pub fn get(current_track: &str, s: u64) -> String {
+        let hash_table = HashMap::from([
+            ("Menu", "menu"),
+            ("TrackList", "playlist"),
+            ("Exit", "exit")
+        ]);
         if s != 0 {
             let t = menu(vec![
                 label(format!("Track {}  {} s", current_track, s)),

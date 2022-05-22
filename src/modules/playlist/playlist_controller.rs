@@ -1,9 +1,11 @@
+use core::panicking::AssertKind::Ne;
 use crate::infra::next::Next;
 use crate::infra::request::Request;
 use crate::infra::route::Route;
 use crate::modules::playlist::playlist_entity::Playlist;
 use crate::views::playlist_view::PlaylistView;
 use std::collections::HashMap;
+use crate::app::routing::Commands;
 
 pub struct PlaylistController {
     playlist_service: Playlist,
@@ -18,6 +20,13 @@ impl PlaylistController {
             None => {
                 let tracks = self.playlist_service.get_track_listv2();
                 let result = PlaylistView::getv2("", 0, tracks);
+                match result.as_ref() {
+                    "Back" => Next::new(Commands::BackToMain, None),
+                    _ => Next::new(Commands::PlayTrack,
+                                   Some(Request::new(HashMap::from([("track".to_string(), result)])))
+                    ),
+                }
+
                 if result.eq("Back") {
                     return Next::new(Route::new("playlist", "Back"), None);
                 }

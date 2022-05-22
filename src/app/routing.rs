@@ -13,6 +13,18 @@ pub struct Routing {
     player: Player,
 }
 
+#[derive(Clone)]
+pub enum Commands {
+    GetMainMenu,
+    GetTrackList,
+    Exit,
+    GetPlaylist,
+    BackToMain,
+    ShowTrack,
+    BackToPlaylist,
+    PlayTrack
+}
+
 impl Routing {
     pub fn new() -> Self {
         Self {
@@ -23,17 +35,16 @@ impl Routing {
         }
     }
 
-    pub fn routes(&mut self, path: &str, route: Next) -> Next {
+    pub fn routes(&mut self, path: Commands, route: Next) -> Next {
         match path {
-            "main/Show" => self.main_controller.show_menu(),
-            "main/TrackList" => self.main_controller.playlist(),
-            "main/Exit" => self.main_controller.exit(),
-            "playlist/TrackList" => self.playlist_controller.get_track_list(route),
-            "playlist/Back" => self.playlist_controller.back(),
-            "track/Show" => self.track_controller.get_current_track(&self.player),
-            "track/Back" => self.track_controller.back(),
-            "track/play" => self.track_controller.play_track(route, &mut self.player),
-            _ => Next::new(Route::new("", ""), None),
+            Commands::GetMainMenu => self.main_controller.show_menu(),
+            Commands::GetTrackList => self.main_controller.playlist(),
+            Commands::Exit => self.main_controller.exit(),
+            Commands::GetPlaylist => self.playlist_controller.get_track_list(route),
+            Commands::BackToMain => self.playlist_controller.back(),
+            Commands::ShowTrack => self.track_controller.get_current_track(&self.player),
+            Commands::BackToPlaylist => self.track_controller.back(),
+            Commands::PlayTrack => self.track_controller.play_track(route, &mut self.player)
         }
     }
 }

@@ -24,8 +24,8 @@ impl Router {
         let mut point = route_start;
 
         loop {
-            let path = point.route.route_path.clone() + "/" + &point.route.command;
-            let result = self.routing.routes(&path, point.clone());
+            let path = point.route;
+            let result = self.routing.routes(path, point.clone());
             point = result;
         }
     }
