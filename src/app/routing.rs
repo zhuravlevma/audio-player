@@ -1,5 +1,4 @@
 use crate::infra::next::Next;
-use crate::infra::route::Route;
 use crate::modules::main::main_controller::MainController;
 use crate::modules::player::player_entity::Player;
 use crate::modules::playlist::playlist_controller::PlaylistController;
@@ -16,13 +15,12 @@ pub struct Routing {
 #[derive(Clone)]
 pub enum Commands {
     GetMainMenu,
-    GetTrackList,
     Exit,
     GetPlaylist,
     BackToMain,
     ShowTrack,
     BackToPlaylist,
-    PlayTrack
+    PlayTrack,
 }
 
 impl Routing {
@@ -35,16 +33,17 @@ impl Routing {
         }
     }
 
-    pub fn routes(&mut self, path: Commands, route: Next) -> Next {
-        match path {
+    pub fn routes(&mut self, point_clone: Next) -> Next {
+        match point_clone.route {
             Commands::GetMainMenu => self.main_controller.show_menu(),
-            Commands::GetTrackList => self.main_controller.playlist(),
             Commands::Exit => self.main_controller.exit(),
-            Commands::GetPlaylist => self.playlist_controller.get_track_list(route),
+            Commands::GetPlaylist => self.playlist_controller.get_track_list(point_clone),
             Commands::BackToMain => self.playlist_controller.back(),
             Commands::ShowTrack => self.track_controller.get_current_track(&self.player),
             Commands::BackToPlaylist => self.track_controller.back(),
-            Commands::PlayTrack => self.track_controller.play_track(route, &mut self.player)
+            Commands::PlayTrack => self
+                .track_controller
+                .play_track(point_clone, &mut self.player),
         }
     }
 }

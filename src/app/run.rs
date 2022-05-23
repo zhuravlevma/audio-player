@@ -1,5 +1,5 @@
+use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::infra::route::Route;
 use crate::infra::router::{Router, RouterError};
 use crate::utils::console::ConsoleError;
 use thiserror::Error;
@@ -21,7 +21,7 @@ impl Run {
 
     pub fn start(&mut self) -> Result<(), RunError> {
         let mut router = Router::new();
-        router.run(Next::new(Route::new("playlist", "TrackList"), None))?;
+        router.run(Next::new(Commands::GetPlaylist, None))?;
         Ok(())
     }
 }

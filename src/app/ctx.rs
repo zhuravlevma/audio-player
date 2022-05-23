@@ -1,7 +1,7 @@
 use crate::modules::player::player_entity::Player;
 
 pub struct Ctx {
-    player: Player
+    player: Player,
 }
 
 impl Ctx {

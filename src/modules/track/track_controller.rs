@@ -1,5 +1,5 @@
+use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::infra::route::Route;
 use crate::modules::player::player_entity::Player;
 use crate::modules::track::track_entity::TrackEntity;
 use crate::views::track_view::TrackView;
@@ -15,11 +15,17 @@ impl TrackController {
         match player.get_current_trackv2() {
             None => {
                 let s = TrackView::not_found();
-                Next::new(Route::new("track", s), None)
+                match s.as_ref() {
+                    "Back" => Next::new(Commands::BackToPlaylist, None),
+                    _ => Next::new(Commands::BackToPlaylist, None),
+                }
             }
             Some(track) => {
                 let s = TrackView::getv2(track.get_path());
-                Next::new(Route::new("track", s), None)
+                match s.as_ref() {
+                    "Back" => Next::new(Commands::BackToPlaylist, None),
+                    _ => Next::new(Commands::BackToPlaylist, None),
+                }
             }
         }
     }
@@ -38,14 +44,10 @@ impl TrackController {
                 }
             }
         }
-        Next::new(Route::new("track", "Show"), None)
+        Next::new(Commands::ShowTrack, None)
     }
 
     pub fn back(&self) -> Next {
-        Next::new(Route::new("playlist", "TrackList"), None)
-    }
-
-    pub fn error(&self) -> Next {
-        Next::new(Route::new("track", "error"), None)
+        Next::new(Commands::GetPlaylist, None)
     }
 }
