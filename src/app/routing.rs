@@ -39,9 +39,7 @@ impl Routing {
             Commands::BackToMain => self.playlist_controller.back(request, ctx),
             Commands::ShowTrack => self.track_controller.get_current_track(request, ctx),
             Commands::BackToPlaylist => self.track_controller.back(request, ctx),
-            Commands::PlayTrack => self
-                .track_controller
-                .play_track(request, ctx),
+            Commands::PlayTrack => self.track_controller.play_track(request, ctx),
         }
     }
 }

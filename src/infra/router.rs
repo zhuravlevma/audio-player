@@ -4,9 +4,9 @@ pub struct Router {
     routing: Routing,
 }
 
+use crate::app::ctx::Ctx;
 use crate::infra::next::Next;
 use thiserror::Error;
-use crate::app::ctx::Ctx;
 
 #[derive(Error, Debug)]
 pub enum RouterError {
@@ -16,9 +16,7 @@ pub enum RouterError {
 
 impl Router {
     pub fn new(routing: Routing) -> Self {
-        Self {
-            routing,
-        }
+        Self { routing }
     }
 
     pub fn run(&mut self, route_start: Next, mut ctx: Ctx) -> Result<(), RouterError> {

@@ -11,6 +11,7 @@ pub struct Player {
     pub current_sink: Arc<rodio::Sink>,
     time_of_start: Option<Duration>,
     current_track: Option<TrackEntity>,
+    pub is_empty: bool,
 }
 
 impl Player {
@@ -22,6 +23,7 @@ impl Player {
             current_sink: Arc::new(sink),
             time_of_start: None,
             current_track: None,
+            is_empty: true,
         }
     }
 
@@ -33,10 +35,11 @@ impl Player {
 
     fn clear(&mut self) {
         self.current_sink.stop();
+        self.is_empty = true;
         self.current_sink = Arc::new(rodio::Sink::try_new(&self.handle.1).unwrap());
     }
 
-    pub fn _get_time(&self) -> u64 {
+    pub fn get_time(&self) -> u64 {
         match self.time_of_start {
             None => 0,
             Some(time_of_start) => get_interval_secs(time_of_start, time_ms_now()),
@@ -56,6 +59,7 @@ impl Player {
         self.clear();
         self.append_track(track);
         let sink = self.current_sink.clone();
+        self.is_empty = false;
         thread::spawn(move || {
             sink.sleep_until_end();
         });

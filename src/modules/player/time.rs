@@ -5,6 +5,5 @@ pub fn time_ms_now() -> Duration {
     now.duration_since(UNIX_EPOCH).expect("Time went backwards")
 }
 pub fn get_interval_secs(start: Duration, end: Duration) -> u64 {
-    println!("{}, {}", end.as_secs(), start.as_secs());
     end.as_secs() - start.as_secs()
 }

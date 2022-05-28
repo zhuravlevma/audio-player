@@ -1,10 +1,12 @@
+use crate::app::ctx::Ctx;
 use crate::app::routing::Commands;
+use crate::app::routing::Commands::PlayTrack;
 use crate::infra::next::Next;
 use crate::infra::request::Request;
 use crate::modules::playlist::playlist_entity::Playlist;
+use crate::modules::track::track_entity::TrackEntity;
 use crate::views::playlist_view::PlaylistView;
 use std::collections::HashMap;
-use crate::app::ctx::Ctx;
 
 pub struct PlaylistController {
     playlist_service: Playlist,
@@ -14,32 +16,29 @@ impl PlaylistController {
     pub fn new(playlist_service: Playlist) -> Self {
         Self { playlist_service }
     }
-    pub fn get_track_list(&self, _route_data: Next, _ctx: &mut Ctx) -> Next {
-        let tracks = self.playlist_service.get_track_listv2();
-        match self.playlist_service.get_current_track() {
-            None => {
-                let result = PlaylistView::getv2("", 0, tracks);
-                match result.as_ref() {
-                    "Back" => Next::new(Commands::BackToMain, None),
-                    _ => Next::new(
-                        Commands::PlayTrack,
-                        Some(Request::new(HashMap::from([("track".to_string(), result)]))),
-                    ),
-                }
-            }
-            Some(track) => {
-                let result = PlaylistView::getv2(track.get_path(), track.get_start(), tracks);
+    pub fn get_track_list(&self, _route_data: Next, ctx: &Ctx) -> Next {
+        let tracks = self.playlist_service.get_track_list();
+        let response = match ctx.player.get_current_trackv2() {
+            None => PlaylistView::get_playlist_without_header(tracks),
+            Some(track) => PlaylistView::get_playlist_with_header(
+                tracks,
+                track.get_path(),
+                ctx.player.get_time(),
+            ),
+        };
 
-                match result.as_ref() {
-                    "Back" => Next::new(Commands::BackToMain, None),
-                    _ => Next::new(
-                        Commands::PlayTrack,
-                        Some(Request::new(HashMap::from([("track".to_string(), result)]))),
-                    ),
-                }
-            }
+        match response.as_ref() {
+            "Back" => Next::new(Commands::BackToMain, None),
+            _ => Next::new(
+                Commands::PlayTrack,
+                Some(Request::new(HashMap::from([(
+                    "track".to_string(),
+                    response,
+                )]))),
+            ),
         }
     }
+
     pub fn back(&self, _request: Next, _ctx: &mut Ctx) -> Next {
         Next::new(Commands::GetMainMenu, None)
     }

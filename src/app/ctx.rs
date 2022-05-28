@@ -6,8 +6,6 @@ pub struct Ctx {
 
 impl Ctx {
     pub fn new(player: Player) -> Self {
-        Self {
-            player,
-        }
+        Self { player }
     }
 }
