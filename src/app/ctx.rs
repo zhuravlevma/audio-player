@@ -1,13 +1,13 @@
 use crate::modules::player::player_entity::Player;
 
 pub struct Ctx {
-    player: Player,
+    pub player: Player,
 }
 
 impl Ctx {
-    pub fn new() -> Self {
+    pub fn new(player: Player) -> Self {
         Self {
-            player: Player::new(),
+            player,
         }
     }
 }

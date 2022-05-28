@@ -1,6 +1,6 @@
+use crate::app::ctx::Ctx;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::modules::player::player_entity::Player;
 use crate::modules::track::track_entity::TrackEntity;
 use crate::views::track_view::TrackView;
 
@@ -11,8 +11,8 @@ impl TrackController {
         Self {}
     }
 
-    pub fn get_current_track(&self, player: &Player) -> Next {
-        match player.get_current_trackv2() {
+    pub fn get_current_track(&self, _request: Next, ctx: &Ctx) -> Next {
+        match ctx.player.get_current_trackv2() {
             None => {
                 let s = TrackView::not_found();
                 match s.as_ref() {
@@ -30,7 +30,7 @@ impl TrackController {
         }
     }
 
-    pub fn play_track(&self, route_data: Next, player: &mut Player) -> Next {
+    pub fn play_track(&self, route_data: Next, ctx: &mut Ctx) -> Next {
         match route_data.request {
             None => {}
             Some(req) => {
@@ -39,7 +39,7 @@ impl TrackController {
                     None => {}
                     Some(track_path) => {
                         let track_path = track_path.clone();
-                        player.play_track(&TrackEntity::new(track_path))
+                        ctx.player.play_track(&TrackEntity::new(track_path))
                     }
                 }
             }
@@ -47,7 +47,7 @@ impl TrackController {
         Next::new(Commands::ShowTrack, None)
     }
 
-    pub fn back(&self) -> Next {
+    pub fn back(&self, _request: Next, _ctx: &Ctx) -> Next {
         Next::new(Commands::GetPlaylist, None)
     }
 }

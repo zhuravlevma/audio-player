@@ -1,8 +1,10 @@
-use crate::app::routing::Commands;
+use crate::app::routing::{Commands, Routing};
 use crate::infra::next::Next;
 use crate::infra::router::{Router, RouterError};
 use crate::utils::console::ConsoleError;
 use thiserror::Error;
+use crate::app::ctx::Ctx;
+use crate::modules::player::player_entity::Player;
 
 #[derive(Error, Debug)]
 pub enum RunError {
@@ -20,8 +22,8 @@ impl Run {
     }
 
     pub fn start(&mut self) -> Result<(), RunError> {
-        let mut router = Router::new();
-        router.run(Next::new(Commands::GetPlaylist, None))?;
+        let mut router = Router::new(Routing::new());
+        router.run(Next::new(Commands::GetPlaylist, None), Ctx::new(Player::new()))?;
         Ok(())
     }
 }

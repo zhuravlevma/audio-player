@@ -6,6 +6,7 @@ pub struct Router {
 
 use crate::infra::next::Next;
 use thiserror::Error;
+use crate::app::ctx::Ctx;
 
 #[derive(Error, Debug)]
 pub enum RouterError {
@@ -14,18 +15,17 @@ pub enum RouterError {
 }
 
 impl Router {
-    pub fn new() -> Self {
+    pub fn new(routing: Routing) -> Self {
         Self {
-            routing: Routing::new(),
+            routing,
         }
     }
 
-    pub fn run(&mut self, route_start: Next) -> Result<(), RouterError> {
+    pub fn run(&mut self, route_start: Next, mut ctx: Ctx) -> Result<(), RouterError> {
         let mut point = route_start;
-
         loop {
             let point_clone = point.clone();
-            let result = self.routing.routes(point_clone);
+            let result = self.routing.routes(point_clone, &mut ctx);
             point = result;
         }
     }

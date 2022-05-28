@@ -4,6 +4,7 @@ use crate::infra::request::Request;
 use crate::modules::playlist::playlist_entity::Playlist;
 use crate::views::playlist_view::PlaylistView;
 use std::collections::HashMap;
+use crate::app::ctx::Ctx;
 
 pub struct PlaylistController {
     playlist_service: Playlist,
@@ -13,7 +14,7 @@ impl PlaylistController {
     pub fn new(playlist_service: Playlist) -> Self {
         Self { playlist_service }
     }
-    pub fn get_track_list(&self, _route_data: Next) -> Next {
+    pub fn get_track_list(&self, _route_data: Next, _ctx: &mut Ctx) -> Next {
         let tracks = self.playlist_service.get_track_listv2();
         match self.playlist_service.get_current_track() {
             None => {
@@ -39,7 +40,7 @@ impl PlaylistController {
             }
         }
     }
-    pub fn back(&self) -> Next {
+    pub fn back(&self, _request: Next, _ctx: &mut Ctx) -> Next {
         Next::new(Commands::GetMainMenu, None)
     }
 }
