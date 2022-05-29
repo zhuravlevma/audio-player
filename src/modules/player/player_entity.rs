@@ -11,6 +11,7 @@ pub struct Player {
     pub current_sink: Arc<rodio::Sink>,
     time_of_start: Option<Duration>,
     current_track: Option<TrackEntity>,
+    pause_time: Option<Duration>,
     pub is_empty: bool,
 }
 
@@ -23,6 +24,7 @@ impl Player {
             current_sink: Arc::new(sink),
             time_of_start: None,
             current_track: None,
+            pause_time: None,
             is_empty: true,
         }
     }
@@ -33,6 +35,16 @@ impl Player {
             .append(rodio::Decoder::new(BufReader::new(file)).unwrap())
     }
 
+    pub fn pause(&mut self) {
+        self.pause_time = Some(time_ms_now());
+        self.current_sink.pause();
+    }
+
+    pub fn play(&mut self) {
+        self.pause_time = None;
+        self.current_sink.play();
+    }
+
     fn clear(&mut self) {
         self.current_sink.stop();
         self.is_empty = true;
@@ -40,24 +52,31 @@ impl Player {
     }
 
     pub fn get_time(&self) -> u64 {
-        match self.time_of_start {
-            None => 0,
-            Some(time_of_start) => get_interval_secs(time_of_start, time_ms_now()),
+        match self.pause_time {
+            None => match self.time_of_start {
+                None => 0,
+                Some(time_of_start) => get_interval_secs(time_of_start, time_ms_now()),
+            },
+            Some(pause_time) => match self.time_of_start {
+                None => 0,
+                Some(time_of_start) => get_interval_secs(time_of_start, pause_time),
+            },
         }
     }
 
-    pub fn get_current_trackv2(&self) -> Option<&TrackEntity> {
+    pub fn get_current_track(&self) -> Option<&TrackEntity> {
         match &self.current_track {
             None => None,
             Some(track) => Some(track),
         }
     }
 
-    pub fn play_track(&mut self, track: &TrackEntity) {
+    pub fn play_track(&mut self, track: TrackEntity) {
         self.current_track = Some(track.clone());
         self.time_of_start = Some(time_ms_now());
+        self.pause_time = None;
         self.clear();
-        self.append_track(track);
+        self.append_track(&track);
         let sink = self.current_sink.clone();
         self.is_empty = false;
         thread::spawn(move || {

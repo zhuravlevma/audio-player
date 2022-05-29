@@ -3,9 +3,9 @@ use terminal_menu::{button, label, menu, mut_menu, run};
 pub struct TrackView {}
 
 impl TrackView {
-    pub fn getv2(path: &String) -> String {
+    pub fn get_track_with_header(track_path: &str, time: u64) -> String {
         let t = menu(vec![
-            label(format!("Track {}", path)),
+            label(format!("Track {}  {} s", track_path, time)),
             button("Pause"),
             button("Back"),
         ]);

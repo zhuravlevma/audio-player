@@ -12,21 +12,16 @@ impl TrackController {
     }
 
     pub fn get_current_track(&self, _request: Next, ctx: &Ctx) -> Next {
-        match ctx.player.get_current_trackv2() {
-            None => {
-                let s = TrackView::not_found();
-                match s.as_ref() {
-                    "Back" => Next::new(Commands::BackToPlaylist, None),
-                    _ => Next::new(Commands::BackToPlaylist, None),
-                }
-            }
+        let response = match ctx.player.get_current_track() {
+            None => TrackView::not_found(),
             Some(track) => {
-                let s = TrackView::getv2(track.get_path());
-                match s.as_ref() {
-                    "Back" => Next::new(Commands::BackToPlaylist, None),
-                    _ => Next::new(Commands::BackToPlaylist, None),
-                }
+                TrackView::get_track_with_header(track.get_path(), ctx.player.get_time())
             }
+        };
+        match response.as_ref() {
+            "Back" => Next::new(Commands::BackToPlaylist, None),
+            "Pause" => Next::new(Commands::Pause, None),
+            _ => Next::new(Commands::BackToPlaylist, None),
         }
     }
 
@@ -39,11 +34,16 @@ impl TrackController {
                     None => {}
                     Some(track_path) => {
                         let track_path = track_path.clone();
-                        ctx.player.play_track(&TrackEntity::new(track_path))
+                        ctx.player.play_track(TrackEntity::new(track_path))
                     }
                 }
             }
         }
+        Next::new(Commands::ShowTrack, None)
+    }
+
+    pub fn pause(&self, _request: Next, ctx: &mut Ctx) -> Next {
+        ctx.player.pause();
         Next::new(Commands::ShowTrack, None)
     }
 

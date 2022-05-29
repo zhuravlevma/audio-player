@@ -14,9 +14,13 @@ impl MainController {
         std::process::exit(0)
     }
 
-    pub fn show_menu(&self, _request: Next, _ctx: &Ctx) -> Next {
-        let s = MenuView::get(&String::from(""), 0);
-        match s.as_ref() {
+    pub fn show_menu(&self, _request: Next, ctx: &Ctx) -> Next {
+        let response = match ctx.player.get_current_track() {
+            None => MenuView::get_menu_without_header(),
+            Some(track) => MenuView::get_menu_with_header(track.get_path(), ctx.player.get_time()),
+        };
+
+        match response.as_ref() {
             "Exit" => Next::new(Commands::Exit, None),
             "TrackList" => Next::new(Commands::GetPlaylist, None),
             _ => Next::new(Commands::Exit, None),

@@ -1,4 +1,3 @@
-use crate::app::ctx::Ctx;
 use crate::modules::track::track_entity::TrackEntity;
 use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenuItem};
 

@@ -20,6 +20,7 @@ pub enum Commands {
     ShowTrack,
     BackToPlaylist,
     PlayTrack,
+    Pause,
 }
 
 impl Routing {
@@ -40,6 +41,7 @@ impl Routing {
             Commands::ShowTrack => self.track_controller.get_current_track(request, ctx),
             Commands::BackToPlaylist => self.track_controller.back(request, ctx),
             Commands::PlayTrack => self.track_controller.play_track(request, ctx),
+            Commands::Pause => self.track_controller.pause(request, ctx),
         }
     }
 }
