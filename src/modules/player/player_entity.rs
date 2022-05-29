@@ -11,7 +11,7 @@ pub struct Player {
     pub current_sink: Arc<rodio::Sink>,
     time_of_start: Option<Duration>,
     current_track: Option<TrackEntity>,
-    pause_time: Option<Duration>,
+    pub pause_time: Option<Duration>,
     pub is_empty: bool,
 }
 
@@ -41,6 +41,8 @@ impl Player {
     }
 
     pub fn play(&mut self) {
+        let interval = time_ms_now() - self.pause_time.unwrap();
+        self.time_of_start = Some(self.time_of_start.unwrap() + interval);
         self.pause_time = None;
         self.current_sink.play();
     }
