@@ -1,15 +1,14 @@
+mod muzati;
+
 use regex::Regex;
 use std::error::Error;
+use crate::modules::external::muzati::Muzati;
 
 pub async fn test() -> Result<(), Box<dyn Error>> {
-    let data = reqwest::get("https://muzati.net/music/news")
-        .await?
-        .text()
-        .await?;
-    let re = Regex::new("data-track=\"(.*?)\" data-title=\"(.*?)\"").unwrap();
-
-    for cap in re.captures_iter(&data) {
-        println!("{:?} {:?}", &cap[1], &cap[2]);
+    let t = Muzati::new();
+    let tracks = t.get_new_tracks().await?;
+    for track in tracks {
+        println!("{} {}", track.track_url, track.track_name)
     }
     Ok(())
 }
