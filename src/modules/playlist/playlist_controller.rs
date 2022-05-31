@@ -18,9 +18,9 @@ impl PlaylistController {
     pub fn get_track_list(&self, _route_data: Next, ctx: &Ctx) -> Next {
         let tracks = self.playlist_service.get_track_list();
         let response = match ctx.player.get_current_track() {
-            None => PlaylistView::get_playlist_without_header(tracks),
+            None => PlaylistView::get_playlist_without_header(&tracks),
             Some(track) => PlaylistView::get_playlist_with_header(
-                tracks,
+                &tracks,
                 track.get_path(),
                 ctx.player.get_time(),
             ),
@@ -37,10 +37,10 @@ impl PlaylistController {
 
                 Next::new(
                     Commands::PlayTrack,
-                    Some(Request::new(HashMap::from([(
-                        "track".to_string(),
-                        response,
-                    )]))),
+                    Some(Request::new(HashMap::from([
+                        ("track".to_string(), response),
+                        ("is_external".to_string(), "false".to_string()),
+                    ]))),
                 )
             }
         }

@@ -23,6 +23,7 @@ impl Run {
 
     pub fn start(&mut self) -> Result<(), RunError> {
         let mut router = Router::new(Routing::new());
+
         router.run(
             Next::new(Commands::GetPlaylist, None),
             Ctx::new(Player::new()),

@@ -1,5 +1,5 @@
-use std::error::Error;
 use regex::Regex;
+use std::error::Error;
 
 pub struct Muzati {
     base_url: String,
@@ -9,7 +9,6 @@ pub struct MuzatiDto {
     pub track_url: String,
     pub track_name: String,
 }
-
 
 impl Muzati {
     pub fn new() -> Self {
@@ -25,7 +24,12 @@ impl Muzati {
             .text()
             .await?;
 
-        Ok(re.captures_iter(&html_page).map(|el| MuzatiDto { track_url: el[1].to_string(), track_name:  el[2].to_string() }).collect())
+        Ok(re
+            .captures_iter(&html_page)
+            .map(|el| MuzatiDto {
+                track_url: el[1].to_string(),
+                track_name: el[2].to_string(),
+            })
+            .collect())
     }
 }
-

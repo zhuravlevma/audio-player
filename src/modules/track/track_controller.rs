@@ -32,11 +32,14 @@ impl TrackController {
             None => {}
             Some(req) => {
                 let res = req.body.get("track");
+                let external = req.body.get("is_external").unwrap();
                 match res {
                     None => {}
                     Some(track_path) => {
                         let track_path = track_path.clone();
-                        ctx.player.play_track(TrackEntity::new(track_path))
+                        let external = external.clone().parse::<bool>().unwrap();
+                        ctx.player
+                            .play_track(TrackEntity::new(track_path, external))
                     }
                 }
             }

@@ -4,8 +4,8 @@ use app::App;
 
 #[tokio::main]
 async fn main() -> Result<(), AppError> {
-    test().await;
-    // App::new()?.launch()?;
+    // test().await;
+    App::new()?.launch()?;
     Ok(())
 }
 
