@@ -1,9 +1,9 @@
 use crate::app::ctx::Ctx;
+use crate::app::modules::playlist::playlist_entity::Playlist;
+use crate::app::modules::playlist::playlist_view::PlaylistView;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::infra::request::Request;
-use crate::modules::playlist::playlist_entity::Playlist;
-use crate::views::playlist_view::PlaylistView;
 use std::collections::HashMap;
 
 pub struct PlaylistController {

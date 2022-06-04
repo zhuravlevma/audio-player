@@ -1,5 +1,5 @@
 use crate::app::run::{Run, RunError};
-use crate::modules::auth::login::{Login, LoginError};
+use modules::auth::login::{Login, LoginError};
 use thiserror::Error;
 
 pub struct App {
@@ -31,5 +31,6 @@ impl App {
 }
 
 pub mod ctx;
+pub mod modules;
 pub mod routing;
 mod run;

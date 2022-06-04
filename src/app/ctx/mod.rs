@@ -1,4 +1,6 @@
-use crate::modules::player::player_entity::Player;
+use player::player_entity::Player;
+
+pub mod player;
 
 pub struct Ctx {
     pub player: Player,

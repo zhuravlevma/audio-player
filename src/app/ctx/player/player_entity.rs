@@ -1,5 +1,5 @@
-use crate::modules::player::time::{get_interval_secs, time_ms_now};
-use crate::modules::track::track_entity::TrackEntity;
+use crate::app::ctx::player::time::{get_interval_secs, time_ms_now};
+use crate::app::modules::track::track_entity::TrackEntity;
 use rodio::{OutputStream, OutputStreamHandle};
 use std::io::BufReader;
 use std::sync::Arc;

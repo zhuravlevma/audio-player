@@ -1,5 +1,4 @@
 use crate::app::AppError;
-use crate::modules::external::test;
 use app::App;
 
 #[tokio::main]
@@ -11,6 +10,4 @@ async fn main() -> Result<(), AppError> {
 
 mod app;
 mod infra;
-mod modules;
 mod utils;
-mod views;

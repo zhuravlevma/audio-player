@@ -1,11 +1,11 @@
 use crate::app::ctx::Ctx;
+use crate::app::modules::external::muzati::Muzati;
+use crate::app::modules::main::main_controller::MainController;
+use crate::app::modules::playlist::playlist_controller::PlaylistController;
+use crate::app::modules::playlist::playlist_entity::Playlist;
+use crate::app::modules::playlist::playlist_repository::PlaylistRepository;
+use crate::app::modules::track::track_controller::TrackController;
 use crate::infra::next::Next;
-use crate::modules::external::muzati::Muzati;
-use crate::modules::main::main_controller::MainController;
-use crate::modules::playlist::playlist_controller::PlaylistController;
-use crate::modules::playlist::playlist_entity::Playlist;
-use crate::modules::playlist::playlist_repository::PlaylistRepository;
-use crate::modules::track::track_controller::TrackController;
 
 pub struct Routing {
     playlist_controller: PlaylistController,
@@ -29,9 +29,10 @@ pub enum Commands {
 impl Routing {
     pub fn new() -> Self {
         Self {
-            playlist_controller: PlaylistController::new(Playlist::new(
-                PlaylistRepository::new("./assets", Muzati::new()),
-            )),
+            playlist_controller: PlaylistController::new(Playlist::new(PlaylistRepository::new(
+                "./assets",
+                Muzati::new(),
+            ))),
             track_controller: TrackController::new(),
             main_controller: MainController::new(),
         }

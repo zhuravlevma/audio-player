@@ -1,7 +1,7 @@
 use crate::app::ctx::Ctx;
+use crate::app::modules::main::menu_view::MenuView;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::views::menu_view::MenuView;
 
 pub struct MainController {}
 

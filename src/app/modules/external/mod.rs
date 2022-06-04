@@ -1,4 +1,4 @@
-use crate::modules::external::muzati::Muzati;
+use crate::app::modules::external::muzati::Muzati;
 use std::error::Error;
 use std::io::Cursor;
 

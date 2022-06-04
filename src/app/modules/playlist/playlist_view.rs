@@ -1,4 +1,4 @@
-use crate::modules::track::track_entity::TrackEntity;
+use crate::app::modules::track::track_entity::TrackEntity;
 use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenuItem};
 
 pub struct PlaylistView {}

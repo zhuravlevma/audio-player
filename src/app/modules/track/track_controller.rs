@@ -1,8 +1,8 @@
 use crate::app::ctx::Ctx;
+use crate::app::modules::track::track_entity::TrackEntity;
+use crate::app::modules::track::track_view::TrackView;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::modules::track::track_entity::TrackEntity;
-use crate::views::track_view::TrackView;
 
 pub struct TrackController {}
 
