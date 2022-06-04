@@ -1,3 +1,4 @@
+use std::error::Error;
 use crate::app::ctx::player::player_entity::Player;
 use crate::app::ctx::Ctx;
 use crate::app::modules::main::main_view::MainMenuEvents;
@@ -22,13 +23,13 @@ impl Run {
         Self {}
     }
 
-    pub fn start(&mut self) -> Result<(), RunError> {
+    pub async fn start(&mut self) -> Result<(), Box<dyn Error>> {
         let mut router = Router::new(Routing::new());
 
         router.run(
             Next::new(Commands::MainMenu(MainMenuEvents::GetLocalPlaylist), None),
             Ctx::new(Player::new()),
-        )?;
+        ).await?;
         Ok(())
     }
 }

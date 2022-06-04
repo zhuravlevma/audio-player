@@ -7,7 +7,7 @@ pub struct MenuView {}
 pub enum MainMenuEvents {
     GetMenu,
     GetLocalPlaylist,
-    GetExternalPlaylist,
+    GetNewPlaylist,
     Exit,
 }
 

@@ -1,3 +1,4 @@
+use std::error::Error;
 use crate::app::run::{Run, RunError};
 use modules::auth::login::{Login, LoginError};
 use thiserror::Error;
@@ -23,9 +24,9 @@ impl App {
         })
     }
 
-    pub fn launch(&mut self) -> Result<(), AppError> {
+    pub async fn launch(&mut self) -> Result<(), Box<dyn Error>> {
         self.login.validate()?;
-        self.routing.start()?;
+        self.routing.start().await?;
         Ok(())
     }
 }

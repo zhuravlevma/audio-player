@@ -1,3 +1,4 @@
+use std::error::Error;
 use crate::app::routing::Routing;
 
 pub struct Router {
@@ -19,11 +20,11 @@ impl Router {
         Self { routing }
     }
 
-    pub fn run(&mut self, route_start: Next, mut ctx: Ctx) -> Result<(), RouterError> {
+    pub async fn run(&mut self, route_start: Next, mut ctx: Ctx) -> Result<(), Box<dyn Error>> {
         let mut point = route_start;
         loop {
             let point_clone = point.clone();
-            let result = self.routing.routes(point_clone, &mut ctx);
+            let result = self.routing.routes(point_clone, &mut ctx).await?;
             point = result;
         }
     }

@@ -1,3 +1,4 @@
+use std::error::Error;
 use crate::app::ctx::Ctx;
 use crate::app::modules::external::muzati::Muzati;
 use crate::app::modules::main::main_controller::MainController;
@@ -35,8 +36,8 @@ impl Routing {
         }
     }
 
-    pub fn routes(&mut self, request: Next, ctx: &mut Ctx) -> Next {
-        match request.command {
+    pub async fn routes(&mut self, request: Next, ctx: &mut Ctx) -> Result<Next, Box<dyn Error>> {
+        Ok(match request.command {
             Commands::MainMenu(MainMenuEvents::GetMenu) => {
                 self.main_controller.show_menu(request, ctx)
             }
@@ -48,6 +49,7 @@ impl Routing {
             Commands::Playlist(PlaylistEvents::InputTrack) => {
                 self.track_controller.get_current_track(request, ctx)
             }
+            Commands::MainMenu(MainMenuEvents::GetNewPlaylist) => self.playlist_controller.get_new_playlist(request, ctx).await?,
             Commands::Track(TrackEvents::Back) => self.track_controller.back(request, ctx),
             Commands::Track(TrackEvents::PlayTrack) => {
                 self.track_controller.play_track(request, ctx)
@@ -56,7 +58,6 @@ impl Routing {
             Commands::Track(TrackEvents::Continue) => {
                 self.track_controller.track_continue(request, ctx)
             }
-            _ => Next::new(Commands::MainMenu(MainMenuEvents::GetMenu), None),
-        }
+        })
     }
 }
