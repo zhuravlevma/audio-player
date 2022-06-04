@@ -1,10 +1,13 @@
 use crate::app::ctx::Ctx;
 use crate::app::modules::external::muzati::Muzati;
 use crate::app::modules::main::main_controller::MainController;
+use crate::app::modules::main::menu_view::MainMenuEvents;
 use crate::app::modules::playlist::playlist_controller::PlaylistController;
 use crate::app::modules::playlist::playlist_entity::Playlist;
 use crate::app::modules::playlist::playlist_repository::PlaylistRepository;
+use crate::app::modules::playlist::playlist_view::PlaylistEvents;
 use crate::app::modules::track::track_controller::TrackController;
+use crate::app::modules::track::track_view::TrackEvents;
 use crate::infra::next::Next;
 
 pub struct Routing {
@@ -15,15 +18,18 @@ pub struct Routing {
 
 #[derive(Clone)]
 pub enum Commands {
-    GetMainMenu,
-    Exit,
-    GetPlaylist,
-    BackToMain,
-    ShowTrack,
-    BackToPlaylist,
-    PlayTrack,
-    Pause,
-    Continue,
+    MainMenu(MainMenuEvents),
+    Playlist(PlaylistEvents),
+    Track(TrackEvents),
+    // GetMainMenu,
+    // Exit,
+    // GetPlaylist,
+    // BackToMain,
+    // ShowTrack,
+    // BackToPlaylist,
+    // PlayTrack,
+    // Pause,
+    // Continue,
 }
 
 impl Routing {
@@ -40,15 +46,26 @@ impl Routing {
 
     pub fn routes(&mut self, request: Next, ctx: &mut Ctx) -> Next {
         match request.command {
-            Commands::GetMainMenu => self.main_controller.show_menu(request, ctx),
-            Commands::Exit => self.main_controller.exit(request, ctx),
-            Commands::GetPlaylist => self.playlist_controller.get_track_list(request, ctx),
-            Commands::BackToMain => self.playlist_controller.back(request, ctx),
-            Commands::ShowTrack => self.track_controller.get_current_track(request, ctx),
-            Commands::BackToPlaylist => self.track_controller.back(request, ctx),
-            Commands::PlayTrack => self.track_controller.play_track(request, ctx),
-            Commands::Pause => self.track_controller.pause(request, ctx),
-            Commands::Continue => self.track_controller.track_continue(request, ctx),
+            Commands::MainMenu(MainMenuEvents::GetMenu) => {
+                self.main_controller.show_menu(request, ctx)
+            }
+            Commands::MainMenu(MainMenuEvents::Exit) => self.main_controller.exit(request, ctx),
+            Commands::MainMenu(MainMenuEvents::GetLocalPlaylist) => {
+                self.playlist_controller.get_track_list(request, ctx)
+            }
+            Commands::Playlist(PlaylistEvents::Back) => self.playlist_controller.back(request, ctx),
+            Commands::Playlist(PlaylistEvents::InputTrack) => {
+                self.track_controller.get_current_track(request, ctx)
+            }
+            Commands::Track(TrackEvents::Back) => self.track_controller.back(request, ctx),
+            Commands::Track(TrackEvents::PlayTrack) => {
+                self.track_controller.play_track(request, ctx)
+            }
+            Commands::Track(TrackEvents::Pause) => self.track_controller.pause(request, ctx),
+            Commands::Track(TrackEvents::Continue) => {
+                self.track_controller.track_continue(request, ctx)
+            }
+            _ => Next::new(Commands::MainMenu(MainMenuEvents::GetMenu), None),
         }
     }
 }

@@ -1,6 +1,12 @@
 use crate::app::modules::track::track_entity::TrackEntity;
 use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenuItem};
 
+#[derive(Clone)]
+pub enum PlaylistEvents {
+    InputTrack,
+    Back,
+}
+
 pub struct PlaylistView {}
 
 impl PlaylistView {

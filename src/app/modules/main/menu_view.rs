@@ -2,6 +2,14 @@ use terminal_menu::{button, label, menu, mut_menu, run};
 
 pub struct MenuView {}
 
+#[derive(Clone)]
+pub enum MainMenuEvents {
+    GetMenu,
+    GetLocalPlaylist,
+    GetExternalPlaylist,
+    Exit,
+}
+
 impl MenuView {
     pub fn get_menu_with_header(track_path: &str, time: u64) -> String {
         let t = menu(vec![

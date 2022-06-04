@@ -1,5 +1,6 @@
 use crate::app::ctx::player::player_entity::Player;
 use crate::app::ctx::Ctx;
+use crate::app::modules::main::menu_view::MainMenuEvents;
 use crate::app::routing::{Commands, Routing};
 use crate::infra::next::Next;
 use crate::infra::router::{Router, RouterError};
@@ -25,7 +26,7 @@ impl Run {
         let mut router = Router::new(Routing::new());
 
         router.run(
-            Next::new(Commands::GetPlaylist, None),
+            Next::new(Commands::MainMenu(MainMenuEvents::GetLocalPlaylist), None),
             Ctx::new(Player::new()),
         )?;
         Ok(())

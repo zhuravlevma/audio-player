@@ -2,6 +2,14 @@ use terminal_menu::{button, label, menu, mut_menu, run};
 
 pub struct TrackView {}
 
+#[derive(Clone)]
+pub enum TrackEvents {
+    Pause,
+    Continue,
+    Back,
+    PlayTrack,
+}
+
 impl TrackView {
     pub fn get_track_with_header(track_path: &str, time: u64) -> String {
         let t = menu(vec![

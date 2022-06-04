@@ -1,5 +1,5 @@
 use crate::app::ctx::Ctx;
-use crate::app::modules::main::menu_view::MenuView;
+use crate::app::modules::main::menu_view::{MainMenuEvents, MenuView};
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 
@@ -21,9 +21,9 @@ impl MainController {
         };
 
         match response.as_ref() {
-            "Exit" => Next::new(Commands::Exit, None),
-            "TrackList" => Next::new(Commands::GetPlaylist, None),
-            _ => Next::new(Commands::Exit, None),
+            "Exit" => Next::new(Commands::MainMenu(MainMenuEvents::Exit), None),
+            "TrackList" => Next::new(Commands::MainMenu(MainMenuEvents::GetLocalPlaylist), None),
+            _ => Next::new(Commands::MainMenu(MainMenuEvents::Exit), None),
         }
     }
 }

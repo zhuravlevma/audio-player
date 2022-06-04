@@ -1,6 +1,8 @@
 use crate::app::ctx::Ctx;
+use crate::app::modules::main::menu_view::MainMenuEvents;
+use crate::app::modules::playlist::playlist_view::PlaylistEvents;
 use crate::app::modules::track::track_entity::TrackEntity;
-use crate::app::modules::track::track_view::TrackView;
+use crate::app::modules::track::track_view::{TrackEvents, TrackView};
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 
@@ -20,10 +22,10 @@ impl TrackController {
             },
         };
         match response.as_ref() {
-            "Back" => Next::new(Commands::BackToPlaylist, None),
-            "Pause" => Next::new(Commands::Pause, None),
-            "Continue" => Next::new(Commands::Continue, None),
-            _ => Next::new(Commands::BackToPlaylist, None),
+            "Back" => Next::new(Commands::Track(TrackEvents::Back), None),
+            "Pause" => Next::new(Commands::Track(TrackEvents::Pause), None),
+            "Continue" => Next::new(Commands::Track(TrackEvents::Continue), None),
+            _ => Next::new(Commands::Track(TrackEvents::Continue), None),
         }
     }
 
@@ -44,20 +46,20 @@ impl TrackController {
                 }
             }
         }
-        Next::new(Commands::ShowTrack, None)
+        Next::new(Commands::Playlist(PlaylistEvents::InputTrack), None)
     }
 
     pub fn pause(&self, _request: Next, ctx: &mut Ctx) -> Next {
         ctx.player.pause();
-        Next::new(Commands::ShowTrack, None)
+        Next::new(Commands::Playlist(PlaylistEvents::InputTrack), None)
     }
 
     pub fn track_continue(&self, _request: Next, ctx: &mut Ctx) -> Next {
         ctx.player.play();
-        Next::new(Commands::ShowTrack, None)
+        Next::new(Commands::Playlist(PlaylistEvents::InputTrack), None)
     }
 
     pub fn back(&self, _request: Next, _ctx: &Ctx) -> Next {
-        Next::new(Commands::GetPlaylist, None)
+        Next::new(Commands::MainMenu(MainMenuEvents::GetLocalPlaylist), None)
     }
 }
