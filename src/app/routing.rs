@@ -1,7 +1,7 @@
 use crate::app::ctx::Ctx;
 use crate::app::modules::external::muzati::Muzati;
 use crate::app::modules::main::main_controller::MainController;
-use crate::app::modules::main::menu_view::MainMenuEvents;
+use crate::app::modules::main::main_view::MainMenuEvents;
 use crate::app::modules::playlist::playlist_controller::PlaylistController;
 use crate::app::modules::playlist::playlist_entity::Playlist;
 use crate::app::modules::playlist::playlist_repository::PlaylistRepository;
@@ -20,16 +20,7 @@ pub struct Routing {
 pub enum Commands {
     MainMenu(MainMenuEvents),
     Playlist(PlaylistEvents),
-    Track(TrackEvents),
-    // GetMainMenu,
-    // Exit,
-    // GetPlaylist,
-    // BackToMain,
-    // ShowTrack,
-    // BackToPlaylist,
-    // PlayTrack,
-    // Pause,
-    // Continue,
+    Track(TrackEvents)
 }
 
 impl Routing {

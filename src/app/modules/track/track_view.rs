@@ -1,4 +1,5 @@
-use terminal_menu::{button, label, menu, mut_menu, run};
+use terminal_menu::{button, label};
+use crate::utils::menu::Menu;
 
 pub struct TrackView {}
 
@@ -12,31 +13,25 @@ pub enum TrackEvents {
 
 impl TrackView {
     pub fn get_track_with_header(track_path: &str, time: u64) -> String {
-        let t = menu(vec![
+        let items = vec![
             label(format!("Track {}  {} s", track_path, time)),
             button("Pause"),
             button("Back"),
-        ]);
-        run(&t);
-        let s = mut_menu(&t).selected_item_name().to_string();
-        s
+        ];
+        Menu::create_and_handle(items)
     }
 
     pub fn get_pause_track(track_path: &str, time: u64) -> String {
-        let t = menu(vec![
+        let items = vec![
             label(format!("Track {}  {} s", track_path, time)),
             button("Continue"),
             button("Back"),
-        ]);
-        run(&t);
-        let s = mut_menu(&t).selected_item_name().to_string();
-        s
+        ];
+        Menu::create_and_handle(items)
     }
 
     pub fn not_found() -> String {
-        let t = menu(vec![label("error"), button("Back")]);
-        run(&t);
-        let s = mut_menu(&t).selected_item_name().to_string();
-        s
+        let items= vec![label("error"), button("Back")];
+        Menu::create_and_handle(items)
     }
 }

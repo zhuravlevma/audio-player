@@ -1,6 +1,6 @@
 use crate::app::ctx::player::player_entity::Player;
 use crate::app::ctx::Ctx;
-use crate::app::modules::main::menu_view::MainMenuEvents;
+use crate::app::modules::main::main_view::MainMenuEvents;
 use crate::app::routing::{Commands, Routing};
 use crate::infra::next::Next;
 use crate::infra::router::{Router, RouterError};

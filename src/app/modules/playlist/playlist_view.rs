@@ -1,5 +1,6 @@
 use crate::app::modules::track::track_entity::TrackEntity;
-use terminal_menu::{button, label, menu, mut_menu, run, TerminalMenuItem};
+use terminal_menu::{button, label, TerminalMenuItem};
+use crate::utils::menu::Menu;
 
 #[derive(Clone)]
 pub enum PlaylistEvents {
@@ -21,10 +22,7 @@ impl PlaylistView {
             .iter()
             .for_each(|el| items.push(button(el.get_path().to_string())));
         items.push(button("Back"));
-        let t = menu(items);
-        run(&t);
-        let s = mut_menu(&t).selected_item_name().to_string();
-        s
+        Menu::create_and_handle(items)
     }
 
     pub fn get_playlist_without_header(track_list: &[TrackEntity]) -> String {
@@ -33,10 +31,6 @@ impl PlaylistView {
             .map(|el| button(el.get_path().to_string()))
             .collect();
         items.push(button("Back"));
-
-        let t = menu(items);
-        run(&t);
-        let s = mut_menu(&t).selected_item_name().to_string();
-        s
+        Menu::create_and_handle(items)
     }
 }

@@ -1,4 +1,5 @@
-use terminal_menu::{button, label, menu, mut_menu, run};
+use terminal_menu::{button, label};
+use crate::utils::menu::Menu;
 
 pub struct MenuView {}
 
@@ -12,21 +13,17 @@ pub enum MainMenuEvents {
 
 impl MenuView {
     pub fn get_menu_with_header(track_path: &str, time: u64) -> String {
-        let t = menu(vec![
+        let items = vec![
             label(format!("Track {}  {} s", track_path, time)),
             label("Menu"),
             button("TrackList"),
             button("Exit"),
-        ]);
-        run(&t);
-        let s = mut_menu(&t).selected_item_name().to_string();
-        s
+        ];
+        Menu::create_and_handle(items)
     }
 
     pub fn get_menu_without_header() -> String {
-        let t = menu(vec![label("Menu"), button("TrackList"), button("Exit")]);
-        run(&t);
-        let s = mut_menu(&t).selected_item_name().to_string();
-        s
+        let items = vec![label("Menu"), button("TrackList"), button("Exit")];
+        Menu::create_and_handle(items)
     }
 }

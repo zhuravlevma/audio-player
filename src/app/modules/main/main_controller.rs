@@ -1,5 +1,5 @@
 use crate::app::ctx::Ctx;
-use crate::app::modules::main::menu_view::{MainMenuEvents, MenuView};
+use crate::app::modules::main::main_view::{MainMenuEvents, MenuView};
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 
