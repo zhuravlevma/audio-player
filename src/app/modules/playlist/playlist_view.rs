@@ -1,6 +1,6 @@
 use crate::app::modules::track::track_entity::TrackEntity;
-use terminal_menu::{button, label, TerminalMenuItem};
 use crate::utils::menu::Menu;
+use terminal_menu::{button, label, TerminalMenuItem};
 
 #[derive(Clone)]
 pub enum PlaylistEvents {

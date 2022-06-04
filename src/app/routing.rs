@@ -20,7 +20,7 @@ pub struct Routing {
 pub enum Commands {
     MainMenu(MainMenuEvents),
     Playlist(PlaylistEvents),
-    Track(TrackEvents)
+    Track(TrackEvents),
 }
 
 impl Routing {

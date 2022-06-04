@@ -1,5 +1,5 @@
-use terminal_menu::{button, label};
 use crate::utils::menu::Menu;
+use terminal_menu::{button, label};
 
 pub struct MenuView {}
 

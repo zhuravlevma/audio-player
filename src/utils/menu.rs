@@ -1,8 +1,6 @@
 use terminal_menu::{menu, mut_menu, run, TerminalMenuItem};
 
-pub struct Menu {
-
-}
+pub struct Menu {}
 
 impl Menu {
     pub fn create_and_handle(items: Vec<TerminalMenuItem>) -> String {
