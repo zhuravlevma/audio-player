@@ -1,6 +1,6 @@
 use crate::app::ctx::Ctx;
 use crate::app::modules::main::main_view::MainMenuEvents;
-use crate::app::modules::playlist::playlist_entity::Playlist;
+use crate::app::modules::playlist::playlist_service::Playlist;
 use crate::app::modules::playlist::playlist_view::{PlaylistEvents, PlaylistView};
 use crate::app::modules::track::track_entity::TrackEntity;
 use crate::app::modules::track::track_view::TrackEvents;

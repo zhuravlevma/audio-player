@@ -3,7 +3,7 @@ use crate::app::modules::external::muzati::Muzati;
 use crate::app::modules::main::main_controller::MainController;
 use crate::app::modules::main::main_view::MainMenuEvents;
 use crate::app::modules::playlist::playlist_controller::PlaylistController;
-use crate::app::modules::playlist::playlist_entity::Playlist;
+use crate::app::modules::playlist::playlist_service::Playlist;
 use crate::app::modules::playlist::playlist_repository::PlaylistRepository;
 use crate::app::modules::playlist::playlist_view::PlaylistEvents;
 use crate::app::modules::track::track_controller::TrackController;
