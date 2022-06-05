@@ -1,5 +1,5 @@
-use std::error::Error;
 use crate::app::routing::Routing;
+use std::error::Error;
 
 pub struct Router {
     routing: Routing,

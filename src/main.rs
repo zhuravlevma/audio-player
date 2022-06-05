@@ -1,6 +1,5 @@
-use std::error::Error;
-use crate::app::AppError;
 use app::App;
+use std::error::Error;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

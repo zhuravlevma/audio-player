@@ -1,6 +1,6 @@
-use std::error::Error;
 use crate::app::run::{Run, RunError};
 use modules::auth::login::{Login, LoginError};
+use std::error::Error;
 use thiserror::Error;
 
 pub struct App {
@@ -35,3 +35,4 @@ pub mod ctx;
 pub mod modules;
 pub mod routing;
 mod run;
+pub mod command;
