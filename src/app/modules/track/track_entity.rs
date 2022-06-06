@@ -1,7 +1,7 @@
 #[derive(Clone, Debug)]
 pub struct TrackEntity {
     track_path: String,
-    is_external: bool,
+    pub is_external: bool,
 }
 
 impl TrackEntity {

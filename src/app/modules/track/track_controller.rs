@@ -23,19 +23,18 @@ impl TrackController {
         }
     }
 
-    pub fn play_track(&self, route_data: Next, ctx: &mut Ctx) -> Next {
+    pub async fn play_track(&self, route_data: Next, ctx: &mut Ctx) -> Next {
         match route_data.request {
             None => {}
             Some(req) => {
                 let res = req.body.get("track");
-                let external = req.body.get("is_external").unwrap();
                 match res {
                     None => {}
                     Some(track_path) => {
                         let track_path = track_path.clone();
-                        let external = external.clone().parse::<bool>().unwrap();
                         ctx.player
-                            .play_track(TrackEntity::new(track_path, external))
+                            .play_track(TrackEntity::new(track_path, false))
+                            .await
                     }
                 }
             }

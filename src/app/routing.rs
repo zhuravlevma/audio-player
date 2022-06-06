@@ -1,3 +1,6 @@
+use crate::app::command::home_command::HomeCommand;
+use crate::app::command::playlist_command::PlaylistCommand;
+use crate::app::command::track_command::TrackCommand;
 use crate::app::ctx::Ctx;
 use crate::app::modules::external::muzati::Muzati;
 use crate::app::modules::home::home_controller::HomeController;
@@ -7,9 +10,6 @@ use crate::app::modules::playlist::playlist_service::Playlist;
 use crate::app::modules::track::track_controller::TrackController;
 use crate::infra::next::Next;
 use std::error::Error;
-use crate::app::command::home_command::HomeCommand;
-use crate::app::command::playlist_command::PlaylistCommand;
-use crate::app::command::track_command::TrackCommand;
 
 pub struct Routing {
     playlist_controller: PlaylistController,
@@ -46,7 +46,9 @@ impl Routing {
             Commands::MainMenu(HomeCommand::GetLocalPlaylist) => {
                 self.playlist_controller.get_track_list(request, ctx)
             }
-            Commands::Playlist(PlaylistCommand::Back) => self.playlist_controller.back(request, ctx),
+            Commands::Playlist(PlaylistCommand::Back) => {
+                self.playlist_controller.back(request, ctx)
+            }
             Commands::Playlist(PlaylistCommand::InputTrack) => {
                 self.track_controller.get_current_track(request, ctx)
             }
@@ -60,7 +62,7 @@ impl Routing {
             }
             Commands::Track(TrackCommand::Back) => self.track_controller.back(request, ctx),
             Commands::Track(TrackCommand::PlayTrack) => {
-                self.track_controller.play_track(request, ctx)
+                self.track_controller.play_track(request, ctx).await
             }
             Commands::Track(TrackCommand::Pause) => self.track_controller.pause(request, ctx),
             Commands::Track(TrackCommand::Continue) => {

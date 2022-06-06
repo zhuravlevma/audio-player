@@ -1,3 +1,6 @@
+use crate::app::command::home_command::HomeCommand;
+use crate::app::command::playlist_command::PlaylistCommand;
+use crate::app::command::track_command::TrackCommand;
 use crate::app::ctx::Ctx;
 use crate::app::modules::playlist::playlist_service::Playlist;
 use crate::app::modules::playlist::playlist_view::PlaylistView;
@@ -7,9 +10,6 @@ use crate::infra::next::Next;
 use crate::infra::request::Request;
 use std::collections::HashMap;
 use std::error::Error;
-use crate::app::command::home_command::HomeCommand;
-use crate::app::command::playlist_command::PlaylistCommand;
-use crate::app::command::track_command::TrackCommand;
 
 pub struct PlaylistController {
     playlist_service: Playlist,
@@ -35,8 +35,8 @@ impl PlaylistController {
     }
 
     pub fn input(&self, request: Next, ctx: &mut Ctx) -> Next {
-        let track_req = request.request.unwrap();
-        let track_req = track_req.body.get("track").unwrap();
+        let req = request.request.unwrap();
+        let track_req = req.body.get("track").unwrap();
         if let Some(track) = ctx.player.get_current_track() {
             if track.get_path().eq(track_req) {
                 return Next::new(Commands::Playlist(PlaylistCommand::InputTrack), None);
@@ -44,10 +44,10 @@ impl PlaylistController {
         }
         Next::new(
             Commands::Track(TrackCommand::PlayTrack),
-            Some(Request::new(HashMap::from([
-                ("track".to_string(), track_req.to_string()),
-                ("is_external".to_string(), "false".to_string()),
-            ]))),
+            Some(Request::new(HashMap::from([(
+                "track".to_string(),
+                track_req.to_string(),
+            )]))),
         )
     }
 

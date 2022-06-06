@@ -1,3 +1,5 @@
+use crate::app::command::home_command::HomeCommand;
+use crate::app::command::playlist_command::PlaylistCommand;
 use crate::app::modules::track::track_entity::TrackEntity;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
@@ -6,8 +8,6 @@ use crate::utils::menu::Menu;
 use crate::utils::view::View;
 use std::collections::HashMap;
 use terminal_menu::{button, label, TerminalMenuItem};
-use crate::app::command::home_command::HomeCommand;
-use crate::app::command::playlist_command::PlaylistCommand;
 
 pub struct PlaylistView {}
 

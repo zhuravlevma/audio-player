@@ -1,9 +1,9 @@
+use crate::app::command::track_command::TrackCommand;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::utils::menu::Menu;
 use crate::utils::view::View;
 use terminal_menu::{button, label};
-use crate::app::command::track_command::TrackCommand;
 
 pub struct TrackView {}
 

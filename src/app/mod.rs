@@ -31,8 +31,8 @@ impl App {
     }
 }
 
+pub mod command;
 pub mod ctx;
 pub mod modules;
 pub mod routing;
 mod run;
-pub mod command;

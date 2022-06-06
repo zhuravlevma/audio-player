@@ -1,7 +1,7 @@
 use crate::app::ctx::player::time::{get_interval_secs, time_ms_now};
 use crate::app::modules::track::track_entity::TrackEntity;
 use rodio::{OutputStream, OutputStreamHandle};
-use std::io::BufReader;
+use std::io::{BufReader, Cursor};
 use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
@@ -33,6 +33,14 @@ impl Player {
         let file = std::fs::File::open(track.get_path()).unwrap();
         self.current_sink
             .append(rodio::Decoder::new(BufReader::new(file)).unwrap())
+    }
+
+    async fn append_external_track(&self, track: &TrackEntity) {
+        let resp = reqwest::get(track.get_path()).await.unwrap();
+        let bytes = resp.bytes().await.unwrap();
+        let mut cursor = Cursor::new(bytes); // Adds Read and Seek to the bytes via Cursor
+        let source = rodio::Decoder::new(cursor).unwrap();
+        self.current_sink.append(source)
     }
 
     pub fn pause(&mut self) {
@@ -73,7 +81,24 @@ impl Player {
         }
     }
 
-    pub fn play_track(&mut self, track: TrackEntity) {
+    pub async fn play_external_track(&mut self, track: TrackEntity) {
+        self.current_track = Some(track.clone());
+        self.time_of_start = Some(time_ms_now());
+        self.pause_time = None;
+        self.clear();
+        self.append_external_track(&track).await;
+        let sink = self.current_sink.clone();
+        self.is_empty = false;
+        thread::spawn(move || {
+            sink.sleep_until_end();
+        });
+    }
+
+    pub async fn play_track(&mut self, track: TrackEntity) {
+        let url: Vec<&str> = track.get_path().split("://").collect();
+        if url.len() > 1 {
+            return self.play_external_track(track).await;
+        }
         self.current_track = Some(track.clone());
         self.time_of_start = Some(time_ms_now());
         self.pause_time = None;

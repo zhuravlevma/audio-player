@@ -1,3 +1,4 @@
+use crate::app::command::home_command::HomeCommand;
 use crate::app::ctx::player::player_entity::Player;
 use crate::app::ctx::Ctx;
 use crate::app::routing::{Commands, Routing};
@@ -6,7 +7,6 @@ use crate::infra::router::{Router, RouterError};
 use crate::utils::console::ConsoleError;
 use std::error::Error;
 use thiserror::Error;
-use crate::app::command::home_command::HomeCommand;
 
 #[derive(Error, Debug)]
 pub enum RunError {
