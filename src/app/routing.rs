@@ -59,8 +59,7 @@ impl Routing {
                 self.playlist_controller
                     .get_new_playlist(request, ctx)
                     .await?
-            }
-            Commands::Track(TrackCommand::Back) => self.track_controller.back(request, ctx),
+            },
             Commands::Track(TrackCommand::PlayTrack) => {
                 self.track_controller.play_track(request, ctx).await
             }

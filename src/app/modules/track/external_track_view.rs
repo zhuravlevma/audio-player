@@ -5,10 +5,11 @@ use crate::utils::menu::Menu;
 use crate::utils::view::View;
 use terminal_menu::{button, label};
 use crate::app::command::home_command::HomeCommand;
+use crate::app::command::playlist_command::PlaylistCommand;
 
-pub struct TrackView {}
+pub struct ExternalTrackView {}
 
-impl TrackView {
+impl ExternalTrackView {
     pub fn get_track_with_header(track_path: &str, time: u64) -> Next {
         let items = vec![
             label(format!("Track {}  {} s", track_path, time)),
@@ -16,9 +17,8 @@ impl TrackView {
             button("Back"),
         ];
 
-
         match Menu::create_and_handle(items).as_ref() {
-            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetLocalPlaylist), None),
+            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist), None),
             "Pause" => Next::new(Commands::Track(TrackCommand::Pause), None),
             _ => Next::new(Commands::NotFound, None),
         }
@@ -30,9 +30,8 @@ impl TrackView {
             button("Continue"),
             button("Back"),
         ];
-
         match Menu::create_and_handle(items).as_ref() {
-            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetLocalPlaylist), None),
+            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist), None),
             "Continue" => Next::new(Commands::Track(TrackCommand::Continue), None),
             _ => Next::new(Commands::NotFound, None),
         }
