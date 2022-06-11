@@ -3,7 +3,7 @@ use crate::app::command::track_command::TrackCommand;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::utils::menu::Menu;
-use terminal_menu::{button, label};
+use terminal_menu::{back_button, button, label};
 
 pub struct TrackView {}
 
@@ -12,7 +12,7 @@ impl TrackView {
         let items = vec![
             label(format!("Track {}  {} s", track_path, time)),
             button("Pause"),
-            button("Back"),
+            back_button("Back"),
         ];
 
         match Menu::create_and_handle(items).as_ref() {

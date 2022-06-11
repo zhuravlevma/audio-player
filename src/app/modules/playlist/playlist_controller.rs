@@ -23,7 +23,7 @@ impl PlaylistController {
     }
 
     pub async fn get_new_playlist(
-        &self,
+        &mut self,
         _request: Next,
         ctx: &mut Ctx,
     ) -> Result<Next, Box<dyn Error>> {

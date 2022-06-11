@@ -24,7 +24,7 @@ impl PlaylistRepository {
             .collect()
     }
 
-    pub async fn get_new_tracks(&self) -> Result<Vec<TrackEntity>, Box<dyn Error>> {
+    pub async fn get_new_tracks(&mut self) -> Result<Vec<TrackEntity>, Box<dyn Error>> {
         let resp = self.external_api.get_new_tracks().await?;
         let tracks: Vec<TrackEntity> = resp
             .iter()
