@@ -49,19 +49,19 @@ impl Routing {
             Commands::Playlist(PlaylistCommand::Back) => {
                 self.playlist_controller.back(request, ctx)
             }
-            Commands::Playlist(PlaylistCommand::InputTrack) => {
-                self.track_controller.get_current_track(request, ctx)
+            Commands::Playlist(PlaylistCommand::GetPlayingTrack) => {
+                self.track_controller.get_playing_track(request, ctx)
             }
-            Commands::Playlist(PlaylistCommand::Input) => {
-                self.playlist_controller.input(request, ctx)
+            Commands::Playlist(PlaylistCommand::Input(track)) => {
+                self.playlist_controller.input(ctx, track)
             }
             Commands::MainMenu(HomeCommand::GetNewPlaylist) => {
                 self.playlist_controller
                     .get_new_playlist(request, ctx)
                     .await?
             },
-            Commands::Track(TrackCommand::PlayTrack) => {
-                self.track_controller.play_track(request, ctx).await
+            Commands::Track(TrackCommand::PlayTrack(track)) => {
+                self.track_controller.play_track(ctx, track).await
             }
             Commands::Track(TrackCommand::Pause) => self.track_controller.pause(request, ctx),
             Commands::Track(TrackCommand::Continue) => {

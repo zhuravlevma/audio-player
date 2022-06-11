@@ -14,7 +14,7 @@ impl TrackController {
         Self {}
     }
 
-    pub fn get_current_track(&self, _request: Next, ctx: &Ctx) -> Next {
+    pub fn get_playing_track(&self, _request: Next, ctx: &Ctx) -> Next {
         match ctx.player.get_current_track() {
             None => TrackView::not_found(),
             Some(track) => {
@@ -36,32 +36,18 @@ impl TrackController {
         }
     }
 
-    pub async fn play_track(&self, route_data: Next, ctx: &mut Ctx) -> Next {
-        match route_data.request {
-            None => {}
-            Some(req) => {
-                let res = req.body.get("track");
-                match res {
-                    None => {}
-                    Some(track_path) => {
-                        let track_path = track_path.clone();
-                        ctx.player
-                            .play_track(TrackEntity::new(track_path, false))
-                            .await
-                    }
-                }
-            }
-        }
-        Next::new(Commands::Playlist(PlaylistCommand::InputTrack), None)
+    pub async fn play_track(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
+        ctx.player.play_track(TrackEntity::new(track.get_path().to_string(), false)).await;
+        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None)
     }
 
     pub fn pause(&self, _request: Next, ctx: &mut Ctx) -> Next {
         ctx.player.pause();
-        Next::new(Commands::Playlist(PlaylistCommand::InputTrack), None)
+        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None)
     }
 
     pub fn track_continue(&self, _request: Next, ctx: &mut Ctx) -> Next {
         ctx.player.play();
-        Next::new(Commands::Playlist(PlaylistCommand::InputTrack), None)
+        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None)
     }
 }

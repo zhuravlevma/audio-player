@@ -23,7 +23,17 @@ impl PlaylistView {
             .iter()
             .for_each(|el| items.push(button(el.get_path().to_string())));
         items.push(button("Back"));
-        PlaylistView::response(Menu::create_and_handle(items))
+        let track_name = Menu::create_and_handle(items);
+        match track_name.as_ref() {
+            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu), None),
+            _ => {
+                let track = track_list.iter().find(|el| el.get_path().eq(&track_name)).unwrap();
+                Next::new(
+                    Commands::Playlist(PlaylistCommand::Input(track.clone())),
+                    None,
+                )
+            },
+        }
     }
 
     pub fn get_playlist_without_header(track_list: &[TrackEntity]) -> Next {
@@ -32,21 +42,16 @@ impl PlaylistView {
             .map(|el| button(el.get_path().to_string()))
             .collect();
         items.push(button("Back"));
-        PlaylistView::response(Menu::create_and_handle(items))
-    }
-}
-
-impl View for PlaylistView {
-    fn response(command_str: String) -> Next {
-        match command_str.as_ref() {
+        let track_name = Menu::create_and_handle(items);
+        match track_name.as_ref() {
             "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu), None),
-            _ => Next::new(
-                Commands::Playlist(PlaylistCommand::Input),
-                Some(Request::new(HashMap::from([(
-                    "track".to_string(),
-                    command_str,
-                )]))),
-            ),
+            _ => {
+                let track = track_list.iter().find(|el| el.get_path().eq(&track_name)).unwrap();
+                Next::new(
+                    Commands::Playlist(PlaylistCommand::Input(track.clone())),
+                    None,
+                )
+            },
         }
     }
 }

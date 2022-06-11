@@ -34,20 +34,16 @@ impl PlaylistController {
         Ok(self.response(ctx, tracks))
     }
 
-    pub fn input(&self, request: Next, ctx: &mut Ctx) -> Next {
-        let req = request.request.unwrap();
-        let track_req = req.body.get("track").unwrap();
-        if let Some(track) = ctx.player.get_current_track() {
-            if track.get_path().eq(track_req) {
-                return Next::new(Commands::Playlist(PlaylistCommand::InputTrack), None);
+    pub fn input(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
+        let track_path = track.get_path().clone();
+        if let Some(track_player) = ctx.player.get_current_track() {
+            if track_player.get_path().eq(&track_path) {
+                return Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None);
             }
         }
         Next::new(
-            Commands::Track(TrackCommand::PlayTrack),
-            Some(Request::new(HashMap::from([(
-                "track".to_string(),
-                track_req.to_string(),
-            )]))),
+            Commands::Track(TrackCommand::PlayTrack(track)),
+            None,
         )
     }
 
