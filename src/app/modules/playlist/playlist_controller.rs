@@ -1,4 +1,3 @@
-use crate::app::command::home_command::HomeCommand;
 use crate::app::command::playlist_command::PlaylistCommand;
 use crate::app::command::track_command::TrackCommand;
 use crate::app::ctx::Ctx;
@@ -7,8 +6,6 @@ use crate::app::modules::playlist::playlist_view::PlaylistView;
 use crate::app::modules::track::track_entity::TrackEntity;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::infra::request::Request;
-use std::collections::HashMap;
 use std::error::Error;
 
 pub struct PlaylistController {
@@ -38,10 +35,10 @@ impl PlaylistController {
         let track_path = track.get_path().clone();
         if let Some(track_player) = ctx.player.get_current_track() {
             if track_player.get_path().eq(&track_path) {
-                return Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None);
+                return Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack));
             }
         }
-        Next::new(Commands::Track(TrackCommand::PlayTrack(track)), None)
+        Next::new(Commands::Track(TrackCommand::PlayTrack(track)))
     }
 
     fn response(&self, ctx: &Ctx, tracks: Vec<TrackEntity>) -> Next {
@@ -53,9 +50,5 @@ impl PlaylistController {
                 ctx.player.get_time(),
             ),
         }
-    }
-
-    pub fn back(&self, _request: Next, _ctx: &mut Ctx) -> Next {
-        Next::new(Commands::MainMenu(HomeCommand::GetMenu), None)
     }
 }

@@ -4,5 +4,4 @@ use crate::app::modules::track::track_entity::TrackEntity;
 pub enum PlaylistCommand {
     GetPlayingTrack,
     Input(TrackEntity),
-    Back,
 }

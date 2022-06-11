@@ -1,4 +1,3 @@
-use crate::app::command::home_command::HomeCommand;
 use crate::app::command::playlist_command::PlaylistCommand;
 use crate::app::ctx::Ctx;
 use crate::app::modules::track::external_track_view::ExternalTrackView;
@@ -39,18 +38,21 @@ impl TrackController {
 
     pub async fn play_track(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
         ctx.player
-            .play_track(TrackEntity::new(track.get_path().clone(), track.is_external))
+            .play_track(TrackEntity::new(
+                track.get_path().clone(),
+                track.is_external,
+            ))
             .await;
-        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None)
+        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack))
     }
 
     pub fn pause(&self, _request: Next, ctx: &mut Ctx) -> Next {
         ctx.player.pause();
-        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None)
+        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack))
     }
 
     pub fn track_continue(&self, _request: Next, ctx: &mut Ctx) -> Next {
         ctx.player.play();
-        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None)
+        Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack))
     }
 }

@@ -46,9 +46,6 @@ impl Routing {
             Commands::MainMenu(HomeCommand::GetLocalPlaylist) => {
                 self.playlist_controller.get_track_list(request, ctx)
             }
-            Commands::Playlist(PlaylistCommand::Back) => {
-                self.playlist_controller.back(request, ctx)
-            }
             Commands::Playlist(PlaylistCommand::GetPlayingTrack) => {
                 self.track_controller.get_playing_track(request, ctx)
             }
@@ -67,7 +64,7 @@ impl Routing {
             Commands::Track(TrackCommand::Continue) => {
                 self.track_controller.track_continue(request, ctx)
             }
-            Commands::NotFound => Next::new(Commands::NotFound, None),
+            Commands::NotFound => Next::new(Commands::NotFound),
         })
     }
 }

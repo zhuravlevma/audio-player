@@ -1,10 +1,8 @@
 use crate::app::command::home_command::HomeCommand;
-use crate::app::command::playlist_command::PlaylistCommand;
 use crate::app::command::track_command::TrackCommand;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::utils::menu::Menu;
-use crate::utils::view::View;
 use terminal_menu::{button, label};
 
 pub struct ExternalTrackView {}
@@ -18,9 +16,9 @@ impl ExternalTrackView {
         ];
 
         match Menu::create_and_handle(items).as_ref() {
-            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist), None),
-            "Pause" => Next::new(Commands::Track(TrackCommand::Pause), None),
-            _ => Next::new(Commands::NotFound, None),
+            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist)),
+            "Pause" => Next::new(Commands::Track(TrackCommand::Pause)),
+            _ => Next::new(Commands::NotFound),
         }
     }
 
@@ -31,13 +29,9 @@ impl ExternalTrackView {
             button("Back"),
         ];
         match Menu::create_and_handle(items).as_ref() {
-            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist), None),
-            "Continue" => Next::new(Commands::Track(TrackCommand::Continue), None),
-            _ => Next::new(Commands::NotFound, None),
+            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist)),
+            "Continue" => Next::new(Commands::Track(TrackCommand::Continue)),
+            _ => Next::new(Commands::NotFound),
         }
-    }
-
-    pub fn not_found() -> Next {
-        Next::new(Commands::NotFound, None)
     }
 }

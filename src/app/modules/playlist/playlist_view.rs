@@ -3,10 +3,7 @@ use crate::app::command::playlist_command::PlaylistCommand;
 use crate::app::modules::track::track_entity::TrackEntity;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::infra::request::Request;
 use crate::utils::menu::Menu;
-use crate::utils::view::View;
-use std::collections::HashMap;
 use terminal_menu::{button, label, TerminalMenuItem};
 
 pub struct PlaylistView {}
@@ -25,16 +22,13 @@ impl PlaylistView {
         items.push(button("Back"));
         let track_name = Menu::create_and_handle(items);
         match track_name.as_ref() {
-            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu), None),
+            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu)),
             _ => {
                 let track = track_list
                     .iter()
                     .find(|el| el.get_path().eq(&track_name))
                     .unwrap();
-                Next::new(
-                    Commands::Playlist(PlaylistCommand::Input(track.clone())),
-                    None,
-                )
+                Next::new(Commands::Playlist(PlaylistCommand::Input(track.clone())))
             }
         }
     }
@@ -47,16 +41,13 @@ impl PlaylistView {
         items.push(button("Back"));
         let track_name = Menu::create_and_handle(items);
         match track_name.as_ref() {
-            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu), None),
+            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu)),
             _ => {
                 let track = track_list
                     .iter()
                     .find(|el| el.get_path().eq(&track_name))
                     .unwrap();
-                Next::new(
-                    Commands::Playlist(PlaylistCommand::Input(track.clone())),
-                    None,
-                )
+                Next::new(Commands::Playlist(PlaylistCommand::Input(track.clone())))
             }
         }
     }

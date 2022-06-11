@@ -38,7 +38,7 @@ impl Player {
     async fn append_external_track(&self, track: &TrackEntity) {
         let resp = reqwest::get(track.get_path()).await.unwrap();
         let bytes = resp.bytes().await.unwrap();
-        let mut cursor = Cursor::new(bytes); // Adds Read and Seek to the bytes via Cursor
+        let cursor = Cursor::new(bytes); // Adds Read and Seek to the bytes via Cursor
         let source = rodio::Decoder::new(cursor).unwrap();
         self.current_sink.append(source)
     }
@@ -95,8 +95,7 @@ impl Player {
     }
 
     pub async fn play_track(&mut self, track: TrackEntity) {
-        let url: Vec<&str> = track.get_path().split("://").collect();
-        if url.len() > 1 {
+        if track.get_path().split("://").count() > 1 {
             return self.play_external_track(track).await;
         }
         self.current_track = Some(track.clone());
