@@ -1,4 +1,6 @@
-# audio-player
+# Pirate audio player
+
+![image](https://user-images.githubusercontent.com/44276887/173204900-0c0085d9-5211-4fd7-8d2d-0718b097a3f9.png)
 
 ### Infra
 ```mermaid
