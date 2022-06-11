@@ -39,7 +39,7 @@ impl TrackController {
 
     pub async fn play_track(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
         ctx.player
-            .play_track(TrackEntity::new(track.get_path().to_string(), false))
+            .play_track(TrackEntity::new(track.get_path().clone(), track.is_external))
             .await;
         Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None)
     }
