@@ -41,10 +41,7 @@ impl PlaylistController {
                 return Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None);
             }
         }
-        Next::new(
-            Commands::Track(TrackCommand::PlayTrack(track)),
-            None,
-        )
+        Next::new(Commands::Track(TrackCommand::PlayTrack(track)), None)
     }
 
     fn response(&self, ctx: &Ctx, tracks: Vec<TrackEntity>) -> Next {

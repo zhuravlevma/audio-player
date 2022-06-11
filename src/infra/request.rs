@@ -1,10 +1,10 @@
-use std::collections::HashMap;
 use crate::app::modules::track::track_entity::TrackEntity;
+use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct Request {
     pub body: HashMap<String, String>,
-    pub track: Option<TrackEntity>
+    pub track: Option<TrackEntity>,
 }
 
 impl Request {

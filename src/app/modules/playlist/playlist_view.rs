@@ -27,12 +27,15 @@ impl PlaylistView {
         match track_name.as_ref() {
             "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu), None),
             _ => {
-                let track = track_list.iter().find(|el| el.get_path().eq(&track_name)).unwrap();
+                let track = track_list
+                    .iter()
+                    .find(|el| el.get_path().eq(&track_name))
+                    .unwrap();
                 Next::new(
                     Commands::Playlist(PlaylistCommand::Input(track.clone())),
                     None,
                 )
-            },
+            }
         }
     }
 
@@ -46,12 +49,15 @@ impl PlaylistView {
         match track_name.as_ref() {
             "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu), None),
             _ => {
-                let track = track_list.iter().find(|el| el.get_path().eq(&track_name)).unwrap();
+                let track = track_list
+                    .iter()
+                    .find(|el| el.get_path().eq(&track_name))
+                    .unwrap();
                 Next::new(
                     Commands::Playlist(PlaylistCommand::Input(track.clone())),
                     None,
                 )
-            },
+            }
         }
     }
 }

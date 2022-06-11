@@ -17,27 +17,30 @@ impl TrackController {
     pub fn get_playing_track(&self, _request: Next, ctx: &Ctx) -> Next {
         match ctx.player.get_current_track() {
             None => TrackView::not_found(),
-            Some(track) => {
-                match track.is_external {
-                    true => {
-                        match ctx.player.pause_time {
-                            None => ExternalTrackView::get_track_with_header(track.get_path(), ctx.player.get_time()),
-                            Some(_) => ExternalTrackView::get_pause_track(track.get_path(), ctx.player.get_time()),
-                        }
+            Some(track) => match track.is_external {
+                true => match ctx.player.pause_time {
+                    None => ExternalTrackView::get_track_with_header(
+                        track.get_path(),
+                        ctx.player.get_time(),
+                    ),
+                    Some(_) => {
+                        ExternalTrackView::get_pause_track(track.get_path(), ctx.player.get_time())
                     }
-                    false => {
-                        match ctx.player.pause_time {
-                            None => TrackView::get_track_with_header(track.get_path(), ctx.player.get_time()),
-                            Some(_) => TrackView::get_pause_track(track.get_path(), ctx.player.get_time()),
-                        }
+                },
+                false => match ctx.player.pause_time {
+                    None => {
+                        TrackView::get_track_with_header(track.get_path(), ctx.player.get_time())
                     }
-                }
+                    Some(_) => TrackView::get_pause_track(track.get_path(), ctx.player.get_time()),
+                },
             },
         }
     }
 
     pub async fn play_track(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
-        ctx.player.play_track(TrackEntity::new(track.get_path().to_string(), false)).await;
+        ctx.player
+            .play_track(TrackEntity::new(track.get_path().to_string(), false))
+            .await;
         Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack), None)
     }
 
