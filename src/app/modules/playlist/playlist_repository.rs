@@ -1,4 +1,4 @@
-use crate::app::modules::external::muzati::Muzati;
+use crate::app::modules::playlist::external::muzati::Muzati;
 use crate::app::modules::track::track_entity::TrackEntity;
 use std::error::Error;
 use std::fs;

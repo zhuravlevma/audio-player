@@ -33,7 +33,7 @@ impl PlaylistController {
 
     pub fn input(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
         let track_path = track.get_path().clone();
-        if let Some(track_player) = ctx.player.get_current_track() {
+        if let Some(track_player) = ctx.get_player_entity().get_current_track() {
             if track_player.get_path().eq(&track_path) {
                 return Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack));
             }
@@ -42,12 +42,12 @@ impl PlaylistController {
     }
 
     fn response(&self, ctx: &Ctx, tracks: Vec<TrackEntity>) -> Next {
-        match ctx.player.get_current_track() {
+        match ctx.get_player_entity().get_current_track() {
             None => PlaylistView::get_playlist_without_header(&tracks),
             Some(track) => PlaylistView::get_playlist_with_header(
                 &tracks,
                 track.get_path(),
-                ctx.player.get_time(),
+                ctx.get_player_entity().get_time(),
             ),
         }
     }
