@@ -31,9 +31,9 @@ impl App {
     }
 }
 
+pub mod auth;
 pub mod command;
 pub mod ctx;
 pub mod modules;
 pub mod routing;
 mod run;
-pub mod auth;
