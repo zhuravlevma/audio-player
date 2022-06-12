@@ -11,6 +11,7 @@ impl Ctx {
     pub fn new(player: Player) -> Self {
         Self { player }
     }
+
     pub fn get_player_entity(&self) -> &Player {
         &self.player
     }
