@@ -5,10 +5,21 @@ use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::utils::menu::Menu;
 use terminal_menu::{button, label, TerminalMenuItem};
+use crate::app::ctx::player::player_entity::Player;
 
 pub struct PlaylistView {}
 
 impl PlaylistView {
+    pub fn get_playlist(player: &Player, tracks: &Vec<TrackEntity>) -> Next {
+        match player.get_current_track() {
+            None => PlaylistView::get_playlist_without_header(tracks),
+            Some(track) => PlaylistView::get_playlist_with_header(
+                tracks,
+                track.get_path(),
+                player.get_time(),
+            ),
+        }
+    }
     pub fn get_playlist_with_header(
         track_list: &[TrackEntity],
         track_path: &str,

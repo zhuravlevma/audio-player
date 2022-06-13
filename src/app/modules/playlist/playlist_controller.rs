@@ -19,7 +19,7 @@ impl PlaylistController {
 
     pub fn get_track_list(&self, _route_data: Next, ctx: &Ctx) -> Next {
         let tracks = self.playlist_service.get_local_playlist();
-        self.response(ctx, tracks)
+        PlaylistView::get_playlist(ctx.get_player_entity(), &tracks)
     }
 
     pub async fn get_new_playlist(
@@ -28,27 +28,15 @@ impl PlaylistController {
         ctx: &mut Ctx,
     ) -> Result<Next, Box<dyn Error>> {
         let tracks = self.playlist_service.get_new_playlist().await?;
-        Ok(self.response(ctx, tracks))
+        Ok(PlaylistView::get_playlist(ctx.get_player_entity(), &tracks))
     }
 
     pub fn input(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
-        let track_path = track.get_path().clone();
-        if let Some(track_player) = ctx.get_player_entity().get_current_track() {
-            if track_player.get_path().eq(&track_path) {
+        if let Some(current_track) = ctx.get_player_entity().get_current_track() {
+            if current_track.path_is_equal(track.get_path()) {
                 return Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack));
             }
         }
         Next::new(Commands::Track(TrackCommand::PlayTrack(track)))
-    }
-
-    fn response(&self, ctx: &Ctx, tracks: Vec<TrackEntity>) -> Next {
-        match ctx.get_player_entity().get_current_track() {
-            None => PlaylistView::get_playlist_without_header(&tracks),
-            Some(track) => PlaylistView::get_playlist_with_header(
-                &tracks,
-                track.get_path(),
-                ctx.get_player_entity().get_time(),
-            ),
-        }
     }
 }

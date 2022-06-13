@@ -14,4 +14,8 @@ impl TrackEntity {
     pub fn get_path(&self) -> &String {
         &self.track_path
     }
+
+    pub fn path_is_equal(&self, path: &String) -> bool {
+        self.track_path.eq(path)
+    }
 }

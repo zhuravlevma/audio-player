@@ -14,6 +14,7 @@ impl Playlist {
     pub fn get_local_playlist(&self) -> Vec<TrackEntity> {
         self.repository.get_local_playlist()
     }
+
     pub async fn get_new_playlist(&mut self) -> Result<Vec<TrackEntity>, Box<dyn Error>> {
         self.repository.get_new_tracks().await
     }
