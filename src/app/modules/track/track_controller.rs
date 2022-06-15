@@ -19,21 +19,21 @@ impl TrackController {
             Some(track) => match track.is_external {
                 true => match ctx.get_player_entity().pause_time {
                     None => ExternalTrackView::get_track_with_header(
-                        track.get_path(),
+                        track.get_name(),
                         ctx.get_player_entity().get_time(),
                     ),
                     Some(_) => ExternalTrackView::get_pause_track(
-                        track.get_path(),
+                        track.get_name(),
                         ctx.get_player_entity().get_time(),
                     ),
                 },
                 false => match ctx.get_player_entity().pause_time {
                     None => TrackView::get_track_with_header(
-                        track.get_path(),
+                        track.get_name(),
                         ctx.get_player_entity().get_time(),
                     ),
                     Some(_) => TrackView::get_pause_track(
-                        track.get_path(),
+                        track.get_name(),
                         ctx.get_player_entity().get_time(),
                     ),
                 },
@@ -42,11 +42,7 @@ impl TrackController {
     }
 
     pub async fn play_track(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
-        ctx.play_new_track(TrackEntity::new(
-            track.get_path().clone(),
-            track.is_external,
-        ))
-        .await;
+        ctx.play_new_track(track.clone()).await;
         Next::new(Commands::Playlist(PlaylistCommand::GetPlayingTrack))
     }
 

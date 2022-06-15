@@ -14,11 +14,6 @@ impl HomeController {
     }
 
     pub fn show_menu(&self, _request: Next, ctx: &Ctx) -> Next {
-        match ctx.get_player_entity().get_current_track() {
-            None => HomeView::get_menu_without_header(),
-            Some(track) => {
-                HomeView::get_menu_with_header(track.get_path(), ctx.get_player_entity().get_time())
-            }
-        }
+        HomeView::get_menu(ctx.get_player_entity())
     }
 }

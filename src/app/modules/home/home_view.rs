@@ -1,4 +1,5 @@
 use crate::app::command::home_command::HomeCommand;
+use crate::app::ctx::player::player_entity::Player;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::utils::menu::Menu;
@@ -7,6 +8,13 @@ use terminal_menu::{button, label};
 pub struct HomeView {}
 
 impl HomeView {
+    pub fn get_menu(player: &Player) -> Next {
+        match player.get_current_track() {
+            None => HomeView::get_menu_without_header(),
+            Some(track) => HomeView::get_menu_with_header(track.get_path(), player.get_time()),
+        }
+    }
+
     pub fn get_menu_with_header(track_path: &str, time: u64) -> Next {
         let items = vec![
             label(format!("Track {}  {} s", track_path, time)),

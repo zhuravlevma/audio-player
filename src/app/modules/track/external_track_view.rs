@@ -8,9 +8,9 @@ use terminal_menu::{button, label};
 pub struct ExternalTrackView {}
 
 impl ExternalTrackView {
-    pub fn get_track_with_header(track_path: &str, time: u64) -> Next {
+    pub fn get_track_with_header(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_path, time)),
+            label(format!("Track {}  {} s", track_name, time)),
             button("Pause"),
             button("Back"),
         ];
@@ -22,9 +22,9 @@ impl ExternalTrackView {
         }
     }
 
-    pub fn get_pause_track(track_path: &str, time: u64) -> Next {
+    pub fn get_pause_track(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_path, time)),
+            label(format!("Track {}  {} s", track_name, time)),
             button("Continue"),
             button("Back"),
         ];
