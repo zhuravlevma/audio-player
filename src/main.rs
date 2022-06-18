@@ -1,6 +1,5 @@
 use app::App;
 use std::error::Error;
-// use terminal_menu::{scroll, string};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

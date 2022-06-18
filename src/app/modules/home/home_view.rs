@@ -11,13 +11,13 @@ impl HomeView {
     pub fn get_menu(player: &Player) -> Next {
         match player.get_current_track() {
             None => HomeView::get_menu_without_header(),
-            Some(track) => HomeView::get_menu_with_header(track.get_path(), player.get_time()),
+            Some(track) => HomeView::get_menu_with_header(track.get_name(), player.get_time()),
         }
     }
 
-    pub fn get_menu_with_header(track_path: &str, time: u64) -> Next {
+    pub fn get_menu_with_header(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_path, time)),
+            label(format!("Track {}  {} s", track_name, time)),
             label("Menu"),
             button("Local Playlist"),
             button("New Playlist"),
