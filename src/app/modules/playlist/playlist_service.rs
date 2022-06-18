@@ -18,4 +18,8 @@ impl Playlist {
     pub async fn get_new_playlist(&mut self) -> Result<Vec<TrackEntity>, Box<dyn Error>> {
         self.repository.get_new_tracks().await
     }
+
+    pub async fn get_popular_playlist(&mut self) -> Result<Vec<TrackEntity>, Box<dyn Error>> {
+        self.repository.get_popular_tracks().await
+    }
 }

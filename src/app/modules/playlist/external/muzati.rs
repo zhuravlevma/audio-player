@@ -47,4 +47,31 @@ impl Muzati {
         };
         Ok(tracks)
     }
+
+    pub async fn get_popular_tracks(&mut self) -> Result<Vec<MuzatiDto>, Box<dyn Error>> {
+        let tracks = match &self.new_tracks {
+            None => {
+                let re =
+                    Regex::new("data-track=\"(.*?)\" data-title=\"(.*?)\" data-artist=\"(.*?)\"")
+                        .unwrap();
+                let html_page = reqwest::get(format!("{}/populyrnye_music_new", self.base_url))
+                    .await?
+                    .text()
+                    .await?;
+
+                let tracks: Vec<MuzatiDto> = re
+                    .captures_iter(&html_page)
+                    .map(|el| MuzatiDto {
+                        track_url: el[1].to_string(),
+                        track_name: el[2].to_string(),
+                        artist: el[3].to_string(),
+                    })
+                    .collect();
+                self.new_tracks = Some(tracks.clone());
+                tracks
+            }
+            Some(tracks) => tracks.clone(),
+        };
+        Ok(tracks)
+    }
 }

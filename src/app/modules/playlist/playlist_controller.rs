@@ -31,6 +31,15 @@ impl PlaylistController {
         Ok(PlaylistView::get_playlist(ctx.get_player_entity(), &tracks))
     }
 
+    pub async fn get_popular_playlist(
+        &mut self,
+        _request: Next,
+        ctx: &mut Ctx,
+    ) -> Result<Next, Box<dyn Error>> {
+        let tracks = self.playlist_service.get_popular_playlist().await?;
+        Ok(PlaylistView::get_playlist(ctx.get_player_entity(), &tracks))
+    }
+
     pub fn input(&self, ctx: &mut Ctx, track: TrackEntity) -> Next {
         if let Some(current_track) = ctx.get_player_entity().get_current_track() {
             if current_track.path_is_equal(track.get_path()) {

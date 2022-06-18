@@ -3,6 +3,7 @@ use crate::app::command::track_command::TrackCommand;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::utils::menu::Menu;
+use crossterm::style::Color;
 use terminal_menu::{button, label};
 
 pub struct ExternalTrackView {}
@@ -10,7 +11,7 @@ pub struct ExternalTrackView {}
 impl ExternalTrackView {
     pub fn get_track_with_header(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_name, time)),
+            label(format!("Track {}  {} s", track_name, time)).colorize(Color::Magenta),
             button("Pause"),
             button("Back"),
         ];
@@ -24,7 +25,7 @@ impl ExternalTrackView {
 
     pub fn get_pause_track(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_name, time)),
+            label(format!("Track {}  {} s", track_name, time)).colorize(Color::Magenta),
             button("Continue"),
             button("Back"),
         ];

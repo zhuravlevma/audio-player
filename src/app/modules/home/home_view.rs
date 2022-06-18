@@ -3,7 +3,8 @@ use crate::app::ctx::player::player_entity::Player;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::utils::menu::Menu;
-use terminal_menu::{button, label};
+use crossterm::style::Color;
+use terminal_menu::*;
 
 pub struct HomeView {}
 
@@ -17,15 +18,16 @@ impl HomeView {
 
     pub fn get_menu_with_header(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_name, time)),
-            label("Menu"),
+            label(format!("Track {}  {} s", track_name, time)).colorize(Color::Magenta),
             button("Local Playlist"),
             button("New Playlist"),
+            button("Popular Playlist"),
             button("Exit"),
         ];
         match Menu::create_and_handle(items).as_ref() {
             "Local Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetLocalPlaylist)),
             "New Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist)),
+            "Popular Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetPopularPlaylist)),
             "Exit" => Next::new(Commands::MainMenu(HomeCommand::Exit)),
             _ => Next::new(Commands::NotFound),
         }
@@ -33,14 +35,15 @@ impl HomeView {
 
     pub fn get_menu_without_header() -> Next {
         let items = vec![
-            label("Menu"),
             button("Local Playlist"),
             button("New Playlist"),
+            button("Popular Playlist"),
             button("Exit"),
         ];
         match Menu::create_and_handle(items).as_ref() {
             "Local Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetLocalPlaylist)),
             "New Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist)),
+            "Popular Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetPopularPlaylist)),
             "Exit" => Next::new(Commands::MainMenu(HomeCommand::Exit)),
             _ => Next::new(Commands::NotFound),
         }

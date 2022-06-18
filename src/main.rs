@@ -1,3 +1,5 @@
+extern crate core;
+
 use app::App;
 use std::error::Error;
 

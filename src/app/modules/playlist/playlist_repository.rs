@@ -49,4 +49,20 @@ impl PlaylistRepository {
             .collect();
         Ok(tracks)
     }
+
+    pub async fn get_popular_tracks(&mut self) -> Result<Vec<TrackEntity>, Box<dyn Error>> {
+        let resp = self.external_api.get_popular_tracks().await?;
+        let tracks: Vec<TrackEntity> = resp
+            .iter()
+            .map(|el| {
+                TrackEntity::new(
+                    el.track_url.to_string(),
+                    el.track_name.to_string(),
+                    el.artist.to_string(),
+                    true,
+                )
+            })
+            .collect();
+        Ok(tracks)
+    }
 }
