@@ -4,6 +4,7 @@ use crate::app::routing::Commands;
 use crate::infra::next::Next;
 use crate::utils::menu::Menu;
 use crossterm::style::Color;
+use std::collections::HashMap;
 use terminal_menu::{button, label};
 
 pub struct ExternalTrackView {}
@@ -25,7 +26,7 @@ impl ExternalTrackView {
 
     pub fn get_pause_track(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_name, time)).colorize(Color::Magenta),
+            label(format!("♬ {} ⧗ {} s", track_name, time)).colorize(Color::Magenta),
             button("Continue"),
             button("Back"),
         ];

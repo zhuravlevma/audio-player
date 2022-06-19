@@ -9,6 +9,9 @@ use terminal_menu::*;
 pub struct HomeView {}
 
 impl HomeView {
+    pub fn new() -> Self {
+        Self {}
+    }
     pub fn get_menu(player: &Player) -> Next {
         match player.get_current_track() {
             None => HomeView::get_menu_without_header(),
@@ -18,7 +21,7 @@ impl HomeView {
 
     pub fn get_menu_with_header(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_name, time)).colorize(Color::Magenta),
+            label(format!("♬ {} ⧗ {} s", track_name, time)).colorize(Color::Magenta),
             button("Local Playlist"),
             button("New Playlist"),
             button("Popular Playlist"),

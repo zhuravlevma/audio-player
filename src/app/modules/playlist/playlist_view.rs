@@ -25,10 +25,10 @@ impl PlaylistView {
         time: u64,
     ) -> Next {
         let mut items: Vec<TerminalMenuItem> =
-            vec![label(format!("Track {}  {} s", track_name, time)).colorize(Color::Magenta)];
+            vec![label(format!("♬ {} ⧗ {} s", track_name, time)).colorize(Color::Magenta)];
         track_list
             .iter()
-            .for_each(|el| items.push(button(format!("{} {}", el.get_name(), el.get_artist()))));
+            .for_each(|el| items.push(button(format!("{} | {}", el.get_name(), el.get_artist()))));
         items.push(button("Back"));
         let track_name = Menu::create_and_handle(items);
         let track_name_spl: Vec<&str> = track_name.split(" | ").collect();
@@ -37,7 +37,7 @@ impl PlaylistView {
             _ => {
                 let track = track_list
                     .iter()
-                    .find(|el| el.get_name().eq(&track_name))
+                    .find(|el| el.get_name().eq(track_name_spl[0]))
                     .unwrap();
                 Next::new(Commands::Playlist(PlaylistCommand::Input(track.clone())))
             }
@@ -57,7 +57,7 @@ impl PlaylistView {
             _ => {
                 let track = track_list
                     .iter()
-                    .find(|el| el.get_name().eq(&track_name))
+                    .find(|el| el.get_name().eq(track_name_spl[0]))
                     .unwrap();
                 Next::new(Commands::Playlist(PlaylistCommand::Input(track.clone())))
             }

@@ -3,6 +3,8 @@ use crate::app::command::playlist_command::PlaylistCommand;
 use crate::app::command::track_command::TrackCommand;
 use crate::app::ctx::Ctx;
 use crate::app::modules::home::home_controller::HomeController;
+use crate::app::modules::home::home_serivce::HomeService;
+use crate::app::modules::home::home_view::HomeView;
 use crate::app::modules::playlist::external::muzati::Muzati;
 use crate::app::modules::playlist::playlist_controller::PlaylistController;
 use crate::app::modules::playlist::playlist_repository::PlaylistRepository;
@@ -33,7 +35,7 @@ impl Routing {
                 Muzati::new(),
             ))),
             track_controller: TrackController::new(),
-            main_controller: HomeController::new(),
+            main_controller: HomeController::new(HomeService::new(HomeView::new())),
         }
     }
 

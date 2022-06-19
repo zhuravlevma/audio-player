@@ -1,12 +1,15 @@
 use crate::app::ctx::Ctx;
+use crate::app::modules::home::home_serivce::HomeService;
 use crate::app::modules::home::home_view::HomeView;
 use crate::infra::next::Next;
 
-pub struct HomeController {}
+pub struct HomeController {
+    home_service: HomeService,
+}
 
 impl HomeController {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(home_service: HomeService) -> Self {
+        Self { home_service }
     }
 
     pub fn exit(&self, _request: Next, _ctx: &Ctx) -> Next {
