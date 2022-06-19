@@ -28,7 +28,7 @@ impl Run {
 
         router
             .run(
-                Next::new(Commands::MainMenu(HomeCommand::GetLocalPlaylist)),
+                Next::new(Commands::MainMenu(HomeCommand::GetMenu)),
                 Ctx::new(Player::new()),
             )
             .await?;

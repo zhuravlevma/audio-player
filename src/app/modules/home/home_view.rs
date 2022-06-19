@@ -12,14 +12,14 @@ impl HomeView {
     pub fn new() -> Self {
         Self {}
     }
-    pub fn get_menu(player: &Player) -> Next {
+    pub fn get_menu(&self, player: &Player) -> Next {
         match player.get_current_track() {
-            None => HomeView::get_menu_without_header(),
-            Some(track) => HomeView::get_menu_with_header(track.get_name(), player.get_time()),
+            None => self.get_menu_without_header(),
+            Some(track) => self.get_menu_with_header(track.get_name(), player.get_time()),
         }
     }
 
-    pub fn get_menu_with_header(track_name: &str, time: u64) -> Next {
+    pub fn get_menu_with_header(&self, track_name: &str, time: u64) -> Next {
         let items = vec![
             label(format!("♬ {} ⧗ {} s", track_name, time)).colorize(Color::Magenta),
             button("Local Playlist"),
@@ -36,7 +36,7 @@ impl HomeView {
         }
     }
 
-    pub fn get_menu_without_header() -> Next {
+    pub fn get_menu_without_header(&self) -> Next {
         let items = vec![
             button("Local Playlist"),
             button("New Playlist"),
