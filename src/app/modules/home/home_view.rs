@@ -2,7 +2,7 @@ use crate::app::command::home_command::HomeCommand;
 use crate::app::ctx::player::player_entity::Player;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::utils::menu::Menu;
+use crate::utils::menu_factory::MenuFactory;
 use crossterm::style::Color;
 use terminal_menu::*;
 
@@ -27,7 +27,7 @@ impl HomeView {
             button("Popular Playlist"),
             button("Exit"),
         ];
-        match Menu::create_and_handle(items).as_ref() {
+        match MenuFactory::create_and_handle(items).as_ref() {
             "Local Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetLocalPlaylist)),
             "New Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist)),
             "Popular Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetPopularPlaylist)),
@@ -43,7 +43,7 @@ impl HomeView {
             button("Popular Playlist"),
             button("Exit"),
         ];
-        match Menu::create_and_handle(items).as_ref() {
+        match MenuFactory::create_and_handle(items).as_ref() {
             "Local Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetLocalPlaylist)),
             "New Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetNewPlaylist)),
             "Popular Playlist" => Next::new(Commands::MainMenu(HomeCommand::GetPopularPlaylist)),

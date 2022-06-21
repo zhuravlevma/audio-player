@@ -9,8 +9,12 @@ use crate::app::modules::playlist::external::muzati::Muzati;
 use crate::app::modules::playlist::playlist_controller::PlaylistController;
 use crate::app::modules::playlist::playlist_repository::PlaylistRepository;
 use crate::app::modules::playlist::playlist_service::Playlist;
+use crate::app::modules::track::external_track_view::ExternalTrackView;
 use crate::app::modules::track::track_controller::TrackController;
+use crate::app::modules::track::track_service::TrackService;
+use crate::app::modules::track::track_view::TrackView;
 use crate::infra::next::Next;
+use crate::utils::menu_factory::MenuFactory;
 use std::error::Error;
 
 pub struct Routing {
@@ -34,7 +38,10 @@ impl Routing {
                 "./assets",
                 Muzati::new(),
             ))),
-            track_controller: TrackController::new(),
+            track_controller: TrackController::new(TrackService::new(
+                TrackView::new(MenuFactory::new()),
+                ExternalTrackView::new(MenuFactory::new()),
+            )),
             main_controller: HomeController::new(HomeService::new(HomeView::new())),
         }
     }

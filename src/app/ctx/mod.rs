@@ -12,9 +12,13 @@ impl Ctx {
         Self { player }
     }
 
-    pub fn get_player_entity(&self) -> &Player {
+    pub fn get_player_entity(&mut self) -> &Player {
         &self.player
     }
+    pub fn get_player_entity_mut(&mut self) -> &mut Player {
+        &mut self.player
+    }
+
 
     pub async fn play_new_track(&mut self, track: TrackEntity) {
         self.player.play_track(track).await

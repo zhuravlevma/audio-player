@@ -4,7 +4,7 @@ use crate::app::ctx::player::player_entity::Player;
 use crate::app::modules::track::track_entity::TrackEntity;
 use crate::app::routing::Commands;
 use crate::infra::next::Next;
-use crate::utils::menu::Menu;
+use crate::utils::menu_factory::MenuFactory;
 use crossterm::style::Color;
 use terminal_menu::{button, label, TerminalMenuItem};
 
@@ -30,7 +30,7 @@ impl PlaylistView {
             .iter()
             .for_each(|el| items.push(button(format!("{} | {}", el.get_name(), el.get_artist()))));
         items.push(button("↩ Back"));
-        let track_name = Menu::create_and_handle(items);
+        let track_name = MenuFactory::create_and_handle(items);
         let track_name_spl: Vec<&str> = track_name.split(" | ").collect();
         match track_name_spl[0] {
             "↩ Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu)),
@@ -50,7 +50,7 @@ impl PlaylistView {
             .map(|el| button(format!("{} | {}", el.get_name(), el.get_artist())))
             .collect();
         items.push(button("↩ Back"));
-        let track_name = Menu::create_and_handle(items);
+        let track_name = MenuFactory::create_and_handle(items);
         let track_name_spl: Vec<&str> = track_name.split(" | ").collect();
         match track_name_spl[0] {
             "↩ Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu)),

@@ -16,7 +16,7 @@ impl HomeController {
         self.home_service.exit()
     }
 
-    pub fn show_menu(&self, _request: Next, ctx: &Ctx) -> Next {
+    pub fn show_menu(&self, _request: Next, ctx: &mut Ctx) -> Next {
         self.home_service.get_menu(ctx.get_player_entity())
     }
 }

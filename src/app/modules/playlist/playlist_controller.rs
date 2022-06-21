@@ -17,7 +17,7 @@ impl PlaylistController {
         Self { playlist_service }
     }
 
-    pub fn get_track_list(&self, _route_data: Next, ctx: &Ctx) -> Next {
+    pub fn get_track_list(&self, _route_data: Next, ctx: &mut Ctx) -> Next {
         let tracks = self.playlist_service.get_local_playlist();
         PlaylistView::get_playlist(ctx.get_player_entity(), &tracks)
     }
