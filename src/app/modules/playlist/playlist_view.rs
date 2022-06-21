@@ -29,11 +29,11 @@ impl PlaylistView {
         track_list
             .iter()
             .for_each(|el| items.push(button(format!("{} | {}", el.get_name(), el.get_artist()))));
-        items.push(button("Back"));
+        items.push(button("↩ Back"));
         let track_name = Menu::create_and_handle(items);
         let track_name_spl: Vec<&str> = track_name.split(" | ").collect();
         match track_name_spl[0] {
-            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu)),
+            "↩ Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu)),
             _ => {
                 let track = track_list
                     .iter()
@@ -49,11 +49,11 @@ impl PlaylistView {
             .iter()
             .map(|el| button(format!("{} | {}", el.get_name(), el.get_artist())))
             .collect();
-        items.push(button("Back"));
+        items.push(button("↩ Back"));
         let track_name = Menu::create_and_handle(items);
         let track_name_spl: Vec<&str> = track_name.split(" | ").collect();
         match track_name_spl[0] {
-            "Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu)),
+            "↩ Back" => Next::new(Commands::MainMenu(HomeCommand::GetMenu)),
             _ => {
                 let track = track_list
                     .iter()

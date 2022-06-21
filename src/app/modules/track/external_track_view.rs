@@ -12,7 +12,7 @@ pub struct ExternalTrackView {}
 impl ExternalTrackView {
     pub fn get_track_with_header(track_name: &str, time: u64) -> Next {
         let items = vec![
-            label(format!("Track {}  {} s", track_name, time)).colorize(Color::Magenta),
+            label(format!("♬ {} ⧗ {} s", track_name, time)).colorize(Color::Magenta),
             button("Pause"),
             button("Back"),
         ];
