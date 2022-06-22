@@ -1,6 +1,5 @@
 use crate::app::ctx::Ctx;
 use crate::app::modules::home::home_serivce::HomeService;
-use crate::app::modules::home::home_view::HomeView;
 use crate::infra::next::Next;
 
 pub struct HomeController {

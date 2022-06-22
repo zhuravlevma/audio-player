@@ -19,7 +19,6 @@ impl Ctx {
         &mut self.player
     }
 
-
     pub async fn play_new_track(&mut self, track: TrackEntity) {
         self.player.play_track(track).await
     }

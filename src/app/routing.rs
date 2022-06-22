@@ -74,6 +74,12 @@ impl Routing {
             Commands::Track(TrackCommand::PlayTrack(track)) => {
                 self.track_controller.play_track(ctx, track).await
             }
+            Commands::Track(TrackCommand::Refresh) => {
+                self.track_controller.get_playing_track(request, ctx)
+            }
+            Commands::Track(TrackCommand::Download) => {
+                self.track_controller.download(request, ctx).await
+            }
             Commands::Track(TrackCommand::Pause) => self.track_controller.pause(request, ctx),
             Commands::Track(TrackCommand::Continue) => {
                 self.track_controller.track_continue(request, ctx)

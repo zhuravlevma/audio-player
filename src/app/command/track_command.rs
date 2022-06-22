@@ -5,4 +5,6 @@ pub enum TrackCommand {
     Pause,
     Continue,
     PlayTrack(TrackEntity),
+    Download,
+    Refresh,
 }
