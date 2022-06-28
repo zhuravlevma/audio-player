@@ -38,11 +38,12 @@ impl Routing {
                 "./assets",
                 Muzati::new(),
             ))),
-            track_controller: TrackController::new(TrackService::new(
+            track_controller: TrackController::new(
+                TrackService::new(),
                 TrackView::new(MenuFactory::new()),
                 ExternalTrackView::new(MenuFactory::new()),
-            )),
-            main_controller: HomeController::new(HomeService::new(HomeView::new())),
+            ),
+            main_controller: HomeController::new(HomeService::new(), HomeView::new()),
         }
     }
 
